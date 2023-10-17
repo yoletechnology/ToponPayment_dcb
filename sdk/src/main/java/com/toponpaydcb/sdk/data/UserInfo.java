@@ -83,6 +83,41 @@ public class UserInfo extends UserInfoBase{
         return super.getPayCallBack();
     }
 
+    public  void decodeDcbPaymentStatus(String res)
+    {
+        if(res.length() <= 0)
+        {
+            Log.e(TAG, "InitDcbPayment:"+res);
+            if(backFunc != null)
+                backFunc.onCallBack(false,"","");
+            return;
+        }
+
+        try {
+            JSONObject jsonObject = new JSONObject(res);
+            String status = jsonObject.getString("status");
+            String errorCode = jsonObject.getString("errorCode");
+            String message = jsonObject.getString("message");
+
+            if(status.indexOf("SUCCESS") ==  -1)
+            {
+                backFunc.onCallBack(false,"errorCode:"+errorCode+";message:"+message,"");
+            }
+            else
+            {
+                String content = jsonObject.getString("content");
+                JSONObject contentJsonObject = new JSONObject(content);
+                String paymentStatus = contentJsonObject.getString("paymentStatus");
+                String paymentDatetime = contentJsonObject.getString("paymentDatetime");
+
+                backFunc.onCallBack(true,contentJsonObject.toString(),"");
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            backFunc.onCallBack(false,e.toString(),"");
+        }
+    }
     public  void decodeInitDcbPayment(String res)
     {
         if(res.length() <= 0)

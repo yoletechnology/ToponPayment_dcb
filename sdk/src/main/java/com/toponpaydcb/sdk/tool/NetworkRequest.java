@@ -66,7 +66,18 @@ public class NetworkRequest {
         Log.d(TAG, "initDcbPayment"+res);
         YoleSdkMgr.getsInstance().user.decodeInitDcbPayment(res);
     }
+    public void getDcbPaymentStatus(String orderNumber) throws Exception {
 
+        JSONObject formBody = new JSONObject ();
+
+        if(orderNumber.length() > 0)
+            formBody.put("orderNumber",orderNumber);
+
+
+        String res = NetUtil.sendPost("api/RUPayment/getDcbPaymentStatus",formBody);
+        Log.d(TAG, "getDcbPaymentStatus"+res);
+        YoleSdkMgr.getsInstance().user.decodeDcbPaymentStatus(res);
+    }
     /**获取支付策略*/
     /**
      *

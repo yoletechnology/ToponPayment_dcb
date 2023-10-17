@@ -87,7 +87,7 @@ public class PaymentView extends Activity {
         //设置可以访问文件
         webSettings.setAllowFileAccess(true);
         //设置支持缩放
-        webSettings.setBuiltInZoomControls(true);
+        webSettings.setBuiltInZoomControls(false);
 //        webSettings.setAppCacheEnabled(true);
         webSettings.setDomStorageEnabled(true);
         webSettings.supportMultipleWindows();
@@ -121,12 +121,13 @@ public class PaymentView extends Activity {
                 try {
 
                     JSONObject jsonObject = new JSONObject(data);
-                    Boolean status = jsonObject.getBoolean("status");
+                    String status = jsonObject.getString("status");
                     String billingNumber = jsonObject.getString("billingNumber");
 
-                    m_activity.finish();
+                    boolean result = (status.indexOf("paid") != -1 && status.length() == "paid".length());
+                    YoleSdkMgr.getsInstance().user.getPayCallBack().onCallBack(result,status,billingNumber);
 
-                    YoleSdkMgr.getsInstance().user.getPayCallBack().onCallBack(status,m_activity.getString(R.string.cancel)+"",billingNumber);
+                    m_activity.finish();
 
                 } catch (JSONException e) {
                     e.printStackTrace();

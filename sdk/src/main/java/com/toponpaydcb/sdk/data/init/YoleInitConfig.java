@@ -69,8 +69,12 @@ public class YoleInitConfig {
     public  boolean isDcb() {
         return this.dcbConfig != null;
     }
-    public  YoleInitConfig setDcbConfig(YoleInitDcbConfig var1) {
-        this.dcbConfig = var1;
+
+    public  YoleInitConfig setDcbSwitch(boolean var1) {
+        if(var1 == true)
+        {
+            this.dcbConfig = new YoleInitDcbConfig();
+        }
         return this;
     }
     /******************************************************/

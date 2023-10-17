@@ -33,7 +33,7 @@ public class YoleSdkMgr extends YoleSdkBase{
     /*****************************************************************/
     /** bcd支付*/
     Activity _activity = null;
-    public void bcdStartPay(Activity act, String amount, String orderNumber, CallBackFunction callBack)
+    public void bcdStartPay(Activity act, String amount, String orderNumber,String currency, CallBackFunction callBack)
     {
 
         if(user.getConfig().isDcb() == false)
@@ -84,7 +84,7 @@ public class YoleSdkMgr extends YoleSdkBase{
                             user.getPayOrderNum(),
                             user.getCountryCode(),
                             "",
-                            "RUB",
+                            currency,
                             user.getMcc(),
                             user.getMnc(),
                             user.getCpCode(),
@@ -102,6 +102,37 @@ public class YoleSdkMgr extends YoleSdkBase{
         Intent i = new Intent(_activity, PaymentView.class);
         i.putExtra(YoleSdkMgr.RETURN_INFO, webUrl);
         _activity.startActivity(i);
+    }
+    public void getDcbPaymentStatus(Activity act,String orderNumber, CallBackFunction callBack)
+    {
+        user.setPayCallBack(new CallBackFunction(){
+            @Override
+            public void onCallBack(boolean data,String info,String billingNumber) {
+                act.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LoadingDialog.getInstance(act).hideDialog();
+                        if(data == true){
+
+                        }else{
+                        }
+                        callBack.onCallBack(data,info,billingNumber);
+                    }
+                });
+            }
+        });
+
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    request.getDcbPaymentStatus(orderNumber);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     /*****************************************************************/
