@@ -109,8 +109,8 @@ public class UserInfo extends UserInfoBase{
                 JSONObject contentJsonObject = new JSONObject(content);
                 String paymentStatus = contentJsonObject.getString("paymentStatus");
                 String paymentDatetime = contentJsonObject.getString("paymentDatetime");
-
-                backFunc.onCallBack(true,contentJsonObject.toString(),"");
+                boolean result = (paymentStatus.indexOf("SUCCESSFUL") != -1 && paymentStatus.length() == "SUCCESSFUL".length());
+                backFunc.onCallBack(result,contentJsonObject.toString(),"");
             }
 
         } catch (JSONException e) {

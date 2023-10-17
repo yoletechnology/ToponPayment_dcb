@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.toponpaydcb.sdk.callback.PaymentStatusCallBackFunction;
 import com.toponpaydcb.sdk.data.InitSdkData;
 import com.toponpaydcb.sdk.dcb.PaymentView;
 import com.toponpaydcb.sdk.callback.CallBackFunction;
-import com.toponpaydcb.sdk.R;
 
 public class YoleSdkMgr extends YoleSdkBase{
 
@@ -41,11 +41,11 @@ public class YoleSdkMgr extends YoleSdkBase{
             callBack.onCallBack(false,"sdk初始化时，未接入Dcb模块","");
             return;
         }
-//        if(user.initSdkData == null || user.initSdkData.payType != InitSdkData.PayType.OP_DCB)
-//        {
-//            callBack.onCallBack(false,"支付方式不可用","");
-//            return;
-//        }
+        if(user.initSdkData == null || user.initSdkData.payType != InitSdkData.PayType.OP_DCB)
+        {
+            callBack.onCallBack(false,"支付方式不可用","");
+            return;
+        }
         _activity = act;
         user.setAmount(amount);
         user.setPayOrderNum(orderNumber);
@@ -103,23 +103,25 @@ public class YoleSdkMgr extends YoleSdkBase{
         i.putExtra(YoleSdkMgr.RETURN_INFO, webUrl);
         _activity.startActivity(i);
     }
-    public void getDcbPaymentStatus(Activity act,String orderNumber, CallBackFunction callBack)
+    public void getDcbPaymentStatus(Activity act, String orderNumber, PaymentStatusCallBackFunction callBack)
     {
         user.setPayCallBack(new CallBackFunction(){
             @Override
-            public void onCallBack(boolean data,String info,String billingNumber) {
+            public void onCallBack(boolean result, String info, String billingNumber) {
                 act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         LoadingDialog.getInstance(act).hideDialog();
-                        if(data == true){
+                        if(result == true){
 
                         }else{
                         }
-                        callBack.onCallBack(data,info,billingNumber);
+                        callBack.onCallBack(result,info);
                     }
                 });
             }
+
+
         });
 
         new Thread(new Runnable(){
