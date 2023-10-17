@@ -15,6 +15,7 @@ public class YoleSdkMgr extends YoleSdkBase{
     private String TAG = "Yole_YoleSdkMgr";
     private static  YoleSdkMgr _instance = null;
     public String ruPayOrderNum = "";
+    public static final String RETURN_INFO = "com.toponpaydcb.sdk.info";
 
     public static YoleSdkMgr getsInstance() {
         if(YoleSdkMgr._instance == null)
@@ -40,11 +41,11 @@ public class YoleSdkMgr extends YoleSdkBase{
             callBack.onCallBack(false,"sdk初始化时，未接入Dcb模块","");
             return;
         }
-        if(user.initSdkData == null || user.initSdkData.payType != InitSdkData.PayType.OP_DCB)
-        {
-            callBack.onCallBack(false,"支付方式不可用","");
-            return;
-        }
+//        if(user.initSdkData == null || user.initSdkData.payType != InitSdkData.PayType.OP_DCB)
+//        {
+//            callBack.onCallBack(false,"支付方式不可用","");
+//            return;
+//        }
         _activity = act;
         user.setAmount(amount);
         user.setPayOrderNum(orderNumber);
@@ -56,6 +57,7 @@ public class YoleSdkMgr extends YoleSdkBase{
                     public void run() {
                         LoadingDialog.getInstance(act).hideDialog();
                         if(data == true){
+
                         }else{
                         }
                         if(isDebugger)
@@ -73,26 +75,20 @@ public class YoleSdkMgr extends YoleSdkBase{
         }
 
 
-        Intent i =new Intent(act, PaymentView.class);
-        act.startActivity(i);
-    }
-    public void createDCBInvoiceBySdk() {
-
-        LoadingDialog.getInstance(_activity).show();//显示
-
         new Thread(new Runnable(){
             @Override
             public void run() {
                 try {
-                    request.createDCBInvoiceBySdk(
-                            user.getCpCode(),
-                            user.getPhoneNumber(),
+                    request.initDcbPayment(
                             user.getAmount(),
+                            user.getPayOrderNum(),
                             user.getCountryCode(),
+                            "",
+                            "RUB",
                             user.getMcc(),
                             user.getMnc(),
-                            user.getPayOrderNum(),
-                            "OP_DCB"
+                            user.getCpCode(),
+                            "SDK"
                     );
 
                 } catch (Exception e) {
@@ -101,6 +97,13 @@ public class YoleSdkMgr extends YoleSdkBase{
             }
         }).start();
     }
+    public void startDcbActivity(String webUrl)
+    {
+        Intent i = new Intent(_activity, PaymentView.class);
+        i.putExtra(YoleSdkMgr.RETURN_INFO, webUrl);
+        _activity.startActivity(i);
+    }
+
     /*****************************************************************/
     /************************SMS 支付*********************************/
     /*****************************************************************/

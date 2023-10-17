@@ -40,29 +40,31 @@ public class NetworkRequest {
         Log.d(TAG, "initAppBySdk"+res);
         YoleSdkMgr.getsInstance().user.decodeInitAppBySdk(res);
     }
-    public void createDCBInvoiceBySdk(String cpCode,String mobile,String amount,String countryCode,String mcc,String mnc,String orderNumber,String paymentKey) throws Exception {
+    public void initDcbPayment(String amount,String orderNumber,String countryCode,String language,String currency,String mcc,String mnc,String cpCode,String from) throws Exception {
 
         JSONObject formBody = new JSONObject ();
-        if(cpCode.length() > 0)
-            formBody.put("cpCode",cpCode);
-        if(mobile.length() > 0)
-            formBody.put("mobile",mobile);
         if(amount.length() > 0)
             formBody.put("amount",amount);
+        if(orderNumber.length() > 0)
+            formBody.put("orderNumber",orderNumber);
         if(countryCode.length() > 0)
             formBody.put("countryCode",countryCode);
+        if(language.length() > 0)
+            formBody.put("language",language);
+        if(currency.length() > 0)
+            formBody.put("currency",currency);
         if(mcc.length() > 0)
             formBody.put("mcc",mcc);
         if(mnc.length() > 0)
             formBody.put("mnc",mnc);
-        if(orderNumber.length() > 0)
-            formBody.put("orderNumber",orderNumber);
-        if(paymentKey.length() > 0)
-            formBody.put("paymentKey",paymentKey);
+        if(cpCode.length() > 0)
+            formBody.put("cpCode",cpCode);
+        if(from.length() > 0)
+            formBody.put("from",from);
 
-        String res = NetUtil.sendPost("api/RUPayment/createDCBInvoiceBySdk",formBody);
-        Log.d(TAG, "createDCBInvoiceBySdk"+res);
-        YoleSdkMgr.getsInstance().user.decodePaymentResults(res);
+        String res = NetUtil.sendPost("api/RUPayment/initDcbPayment",formBody);
+        Log.d(TAG, "initDcbPayment"+res);
+        YoleSdkMgr.getsInstance().user.decodeInitDcbPayment(res);
     }
 
     /**获取支付策略*/
