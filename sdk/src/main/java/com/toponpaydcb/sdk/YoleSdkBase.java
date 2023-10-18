@@ -102,9 +102,9 @@ public class YoleSdkBase {
         initBasicSdkBack = callBack;
         userAgent = userAgent.length() <=0 ? user.getPhoneModel() : userAgent;
         mobile = mobile.length() <=0 ? user.getPhoneNumber() : mobile;
-        this.initBasicSdk(cpCode,userAgent,mobile,user.getGaid(),user.getImei(),user.getMac(),user.getCountryCode(),user.getMcc(),user.getMnc());
+        this.initBasicSdk(cpCode,userAgent,mobile,user.getGaid(),user.getImei(),user.getMac(),user.getCountryCode(),user.getMcc(),user.getMnc(),user.getVersionName());
     }
-    protected void initBasicSdk(String cpCode,String userAgent,String mobile,String gaid,String imei,String mac,String countryCode,String mcc,String mnc) {
+    protected void initBasicSdk(String cpCode,String userAgent,String mobile,String gaid,String imei,String mac,String countryCode,String mcc,String mnc,String versionName) {
 
         new Thread(new Runnable(){
             @Override
@@ -119,7 +119,8 @@ public class YoleSdkBase {
                             countryCode,
                             mcc,
                             mnc,
-                            cpCode
+                            cpCode,
+                            versionName
                     );
 
                 } catch (Exception e) {

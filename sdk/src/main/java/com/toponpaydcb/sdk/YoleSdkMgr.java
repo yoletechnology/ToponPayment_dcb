@@ -33,7 +33,7 @@ public class YoleSdkMgr extends YoleSdkBase{
     /*****************************************************************/
     /** bcd支付*/
     Activity _activity = null;
-    public void bcdStartPay(Activity act, String amount, String orderNumber,String currency, CallBackFunction callBack)
+    public void bcdStartPay(Activity act, String amount, String orderNumber, CallBackFunction callBack)
     {
 
         if(user.getConfig().isDcb() == false)
@@ -41,7 +41,7 @@ public class YoleSdkMgr extends YoleSdkBase{
             callBack.onCallBack(false,"sdk初始化时，未接入Dcb模块","");
             return;
         }
-        if(user.initSdkData == null || user.initSdkData.payType != InitSdkData.PayType.OP_DCB)
+        if(user.initSdkData == null)
         {
             callBack.onCallBack(false,"支付方式不可用","");
             return;
@@ -83,12 +83,9 @@ public class YoleSdkMgr extends YoleSdkBase{
                             user.getAmount(),
                             user.getPayOrderNum(),
                             user.getCountryCode(),
-                            "",
-                            currency,
                             user.getMcc(),
                             user.getMnc(),
-                            user.getCpCode(),
-                            "SDK"
+                            user.getCpCode()
                     );
 
                 } catch (Exception e) {

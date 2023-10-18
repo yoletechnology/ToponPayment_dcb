@@ -59,6 +59,41 @@ public class NetUtil{
             return e.toString();
         }
     }
+    public  static String sendGet(String url,String formBody) {
+        url = "https://api.yolesdk.com/"+url;
+        //创建OkHttp客户端
+        OkHttpClient okHttpClient = new OkHttpClient();
+
+        // 封装请求体
+        MediaType mediaType = MediaType.parse("application/json");
+
+        //创建请求对象
+        RequestBody requestBody = RequestBody.create(mediaType, formBody.toString());
+
+        Log.d(TAG, "appkey:"+ YoleSdkMgr.getsInstance().user.getAppkey());
+        Log.d(TAG, "url:"+url);
+        Log.d(TAG, "FormBody:"+formBody.toString());
+
+        url +="?";
+        url += formBody;
+        Request request = new Request.Builder()
+                .get()
+                .url(url)
+                .addHeader("appkey",YoleSdkMgr.getsInstance().user.getAppkey())
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        try {
+            // 执行这个请求对象
+            Response response = okHttpClient.newCall(request).execute();
+            String result = response.body().string();
+            Log.d(TAG, "onResponse2:"+result);
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return e.toString();
+        }
+    }
 
     public static String serializeMetadata(HashMap<String, String> metadata) throws IOException {
         try(ByteArrayOutputStream baos = new ByteArrayOutputStream();
