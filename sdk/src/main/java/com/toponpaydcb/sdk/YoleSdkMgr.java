@@ -74,7 +74,6 @@ public class YoleSdkMgr extends YoleSdkBase{
             return;
         }
 
-
         new Thread(new Runnable(){
             @Override
             public void run() {
