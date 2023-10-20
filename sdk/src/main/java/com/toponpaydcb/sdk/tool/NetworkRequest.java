@@ -72,28 +72,5 @@ public class NetworkRequest {
         Log.d(TAG, "getPaymentStatus"+res);
         YoleSdkMgr.getsInstance().user.decodeDcbPaymentStatus(res);
     }
-    /**获取支付策略*/
-    /**
-     *
-     * @param countryCode   国家码         CH
-     */
-    public void getPaymentSms(String countryCode) throws Exception {
-        JSONObject formBody = new JSONObject ();
-        if(countryCode.length() > 0)
-            formBody.put("countryCode",countryCode);
 
-        String res = NetUtil.sendPost("api/payment/getPaymentSms",formBody);
-        Log.d(TAG, "getPaymentSms"+res);
-        YoleSdkMgr.getsInstance().user.getPaymentSms(res);
-    }
-
-    public void smsPaymentNotify(String payOrderNum,String paymentStatus) throws Exception {
-        JSONObject formBody = new JSONObject ();
-        formBody.put("payOrderNum",payOrderNum);
-        formBody.put("paymentStatus",paymentStatus);
-
-        String res = NetUtil.sendPost("api/payment/smsPaymentNotify",formBody);
-        Log.d(TAG, "smsPaymentNotify"+res);
-        YoleSdkMgr.getsInstance().user.smsPaymentNotify(res);
-    }
 }
