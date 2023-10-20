@@ -21,24 +21,15 @@ import java.util.Timer;
 
 public class YoleSdkBase {
     private String TAG = "Yole_YoleSdkBase";
-//    private static  YoleSdkMgr _instance = null;
     protected Context context =  null;
     protected boolean isDebugger = false;
-
 
     /**各种网络接口**/
     protected NetworkRequest request = null;
     /**用户信息(通过用户设置 和 请求的返回。组装成的数据)**/
     public UserInfo user =  null;
-//    protected SendSms sms =  null;
-    /**广告sdk初始化定时器*/
-    protected Timer bigosspInitBackTimer = null;
-
-
     /**YoleSdk 初始化结果的回调*/
     public CallBackFunction initBasicSdkBack = null;
-    /**bigosspSdk 初始化结果的回调*/
-    protected InitCallBackFunction bigosspInitBack = null;
 
     /**sdk初始化的主接口*/
     public void initSdk(Context _var1, YoleInitConfig _config, InitCallBackFunction _initBack)
@@ -46,11 +37,6 @@ public class YoleSdkBase {
         context = _var1;
         this.init(_var1,_config);
 
-
-//        //初始化 ruSms的回调
-//        if(_config.isRuSms() == true) {
-//            YoleSdkMgr.getsInstance().initRuSms(next1);
-//        }
         CallBackFunction next1 = new CallBackFunction(){
             @Override
             public void onCallBack(boolean result, String info1, String info2) {
@@ -58,7 +44,6 @@ public class YoleSdkBase {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Bitmap bitmap = null;
                         try {
                             String  icon = YoleSdkMgr.getsInstance().user.initSdkData.productIcon;
                             URL url = new URL(icon);
@@ -92,9 +77,6 @@ public class YoleSdkBase {
         request = new NetworkRequest();
         isDebugger = _config.isDebug();
         user = new UserInfo(var1,_config);
-//        if(_config.isRuSms() == true)
-//            sms = new SendSms(var1);
-
     }
 
     /**初始化sdk*/
@@ -140,33 +122,7 @@ public class YoleSdkBase {
         }
         initBasicSdkBack = null;
     }
-    /*****************************************************************/
-    /************************SMS 支付*********************************/
-    /*****************************************************************/
-    CallBackFunction initRuSmsBack = null;
-    public void initRuSms(CallBackFunction callBack) {
-        initRuSmsBack = callBack;
-        new Thread(new Runnable(){
-            @Override
-            public void run() {
-                try {
-                    request.getPaymentSms(user.getCountryCode());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
-    public void initRuSmsResult(boolean result,String info) {
-        if(result == true && initRuSmsBack != null)
-        {
-            initRuSmsBack.onCallBack(true,"","");
-        }
-        else if(initRuSmsBack != null)
-        {
-            initRuSmsBack.onCallBack(false,info,"");
-        }
-    }
+
     /**支付的可行性*/
     protected boolean getBCDFeasibility(Activity act)
     {

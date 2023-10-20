@@ -27,7 +27,15 @@ public class YoleSdkMgr extends YoleSdkBase{
     private YoleSdkMgr() {
         Log.e(TAG,"YoleSdkMgr");
     }
+    public String getCurrencySymbol()
+    {
+        if(this.user != null && this.user.initSdkData != null)
+        {
+            return this.user.initSdkData.currencySymbol;
+        }
 
+        return "";
+    }
     /*****************************************************************/
     /************************bcd支付*********************************/
     /*****************************************************************/
@@ -132,76 +140,6 @@ public class YoleSdkMgr extends YoleSdkBase{
             }
         }).start();
     }
-
-    /*****************************************************************/
-    /************************SMS 支付*********************************/
-    /*****************************************************************/
-//    /**sms模块的权限注册*/
-//    public void  smsRequest(Activity var1) {
-//
-//        sms.smsRequest(var1);
-//    }
-//    /**sms支付开始 设置回调，显示loading界面***/
-//    public void  smsStartPay(Activity var1,String _payOrderNum,CallBackFunction callBack) {
-//        if(user.initSdkData.payType != InitSdkData.PayType.OP_SMS)
-//        {
-//            callBack.onCallBack(false,"支付方式不可用","");
-//            return;
-//        }
-//        ruPayOrderNum = _payOrderNum;
-//        LoadingDialog.getInstance(var1).show();//显示
-//        user.setPayCallBack(new CallBackFunction(){
-//            @Override
-//            public void onCallBack(boolean data, String info, String billingNumber) {
-//                LoadingDialog.getInstance(var1).hide();//显示
-//                callBack.onCallBack(data,info,billingNumber);
-//
-//            }
-//        });
-//
-//    }
-//    public void initRuSms(CallBackFunction callBack) {
-//        initRuSmsBack = callBack;
-//        new Thread(new Runnable(){
-//            @Override
-//            public void run() {
-//                try {
-//                    request.getPaymentSms(user.getCountryCode());
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
-//    }
-//    public void initRuSmsResult(boolean result,String info) {
-//        if(result == true && initRuSmsBack != null)
-//        {
-//            this.paySdkStartPay();
-//        }
-//        else if(initRuSmsBack != null)
-//        {
-//            initRuSmsBack.onCallBack(false,info,"");
-//        }
-//    }
-//    /**sms支付开始 发送短信功能***/
-//    private void paySdkStartPay()
-//    {
-//        sms.sendSMSS(user.getSmsCode(),user.getSmsNumber());
-//    }
-//    /**sms支付完成 同步服务器结果***/
-//    public void smsPaymentNotify(boolean  paymentStatus)
-//    {
-//        new Thread(new Runnable(){
-//            @Override
-//            public void run() {
-//                try {
-//                    request.smsPaymentNotify(ruPayOrderNum,paymentStatus == true ? "SUCCESSFUL" : "FAILED");
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
-//    }
 
 
 }
