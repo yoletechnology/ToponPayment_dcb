@@ -21,7 +21,7 @@ public class UserInfoBase {
     protected static String smsCode= "";//ru-sms sdk用到的=》短信内容
 
     protected static CallBackFunction backFunc = null;
-    public static InitSdkData initSdkData = null;
+    public static InitSdkData initSdkData = new InitSdkData();;
 
     public  String getSmsNumber()
     {

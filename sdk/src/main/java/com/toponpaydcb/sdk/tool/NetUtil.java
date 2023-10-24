@@ -60,7 +60,7 @@ public class NetUtil{
         }
     }
     public  static String sendGet(String url,String formBody) {
-        url = "https://api.yolesdk.com/"+url;
+
         //创建OkHttp客户端
         OkHttpClient okHttpClient = new OkHttpClient();
 

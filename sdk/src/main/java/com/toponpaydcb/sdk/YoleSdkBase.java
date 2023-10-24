@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.toponpaydcb.sdk.callback.CallBackFunction;
 import com.toponpaydcb.sdk.callback.InitCallBackFunction;
+import com.toponpaydcb.sdk.callback.PaymentStatusCallBack;
 import com.toponpaydcb.sdk.data.UserInfo;
 import com.toponpaydcb.sdk.data.init.YoleInitConfig;
 //import com.yolesdk.sdk.ru_sms.SendSms;
@@ -30,6 +31,7 @@ public class YoleSdkBase {
     public UserInfo user =  null;
     /**YoleSdk 初始化结果的回调*/
     public CallBackFunction initBasicSdkBack = null;
+    public PaymentStatusCallBack paymentStatusCallBack = null;
 
     /**sdk初始化的主接口*/
     public void initSdk(Context _var1, YoleInitConfig _config, InitCallBackFunction _initBack)
@@ -103,6 +105,26 @@ public class YoleSdkBase {
                             mnc,
                             cpCode,
                             versionName
+                    );
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+    public void getPaymentStatus(PaymentStatusCallBack _callBack) {
+
+        paymentStatusCallBack = _callBack;
+        String mcc = user.getMcc();
+        String mnc = user.getMnc();
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    request.getPaymentStatus(
+                            mcc,
+                            mnc
                     );
 
                 } catch (Exception e) {

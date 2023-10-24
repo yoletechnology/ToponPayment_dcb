@@ -10,6 +10,9 @@ import com.toponpaydcb.sdk.data.InitSdkData;
 import com.toponpaydcb.sdk.dcb.PaymentView;
 import com.toponpaydcb.sdk.callback.CallBackFunction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class YoleSdkMgr extends YoleSdkBase{
 
     private String TAG = "Yole_YoleSdkMgr";
@@ -35,6 +38,15 @@ public class YoleSdkMgr extends YoleSdkBase{
         }
 
         return "";
+    }
+    public List<InitSdkData.PayType> getPaymentList()
+    {
+        if(this.user != null && this.user.initSdkData != null)
+        {
+            return this.user.initSdkData.payType;
+        }
+
+        return new ArrayList();
     }
     /*****************************************************************/
     /************************bcd支付*********************************/
@@ -101,12 +113,14 @@ public class YoleSdkMgr extends YoleSdkBase{
             }
         }).start();
     }
+    //启动dcb 支付界面
     public void startDcbActivity(String webUrl)
     {
         Intent i = new Intent(_activity, PaymentView.class);
         i.putExtra(YoleSdkMgr.RETURN_INFO, webUrl);
         _activity.startActivity(i);
     }
+    //查询支付结果
     public void getDcbPaymentStatus(Activity act, String orderNumber, PaymentStatusCallBackFunction callBack)
     {
         user.setPayCallBack(new CallBackFunction(){

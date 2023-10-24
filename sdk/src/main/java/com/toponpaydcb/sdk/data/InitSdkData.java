@@ -2,6 +2,9 @@ package com.toponpaydcb.sdk.data;
 
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class InitSdkData {
     public enum PayType {
         /**不可用*/
@@ -9,6 +12,7 @@ public class InitSdkData {
 
         OP_DCB,
         OP_SMS,
+        OP_DCB_BEELINE,
     }
     /**用户编码*/
     public String userCode = "";
@@ -26,6 +30,7 @@ public class InitSdkData {
     public boolean adsOpen = false;
     /**支持小数点位数*/
     public int currencyDecimal = 0;
+    public List<PayType> payType = new ArrayList();
     /**区号*/
     public String areaCode = "";
 }

@@ -230,7 +230,6 @@ public class UserInfo extends UserInfoBase{
                 {
                     list.add(smsFeeList.get(i).toString());
                 }
-                initSdkData = new InitSdkData();
                 initSdkData.userCode = userCode;
                 initSdkData.productName = productName;
                 initSdkData.productIcon = productIcon;
@@ -269,6 +268,66 @@ public class UserInfo extends UserInfoBase{
         } catch (JSONException e) {
             e.printStackTrace();
             YoleSdkMgr.getsInstance().initBasicSdkResult(false,e.toString());
+        }
+    }
+    public  void getPaymentStatus(String res)
+    {
+        if(res.length() <= 0)
+        {
+            Log.e(TAG, "getPaymentStatus:"+res);
+            YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(false,initSdkData.payType);
+            return;
+        }
+        try {
+            JSONObject jsonObject = new JSONObject(res);
+            String status = jsonObject.getString("status");
+            String errorCode = jsonObject.getString("errorCode");
+            String message = jsonObject.getString("message");
+
+            if(status.indexOf("SUCCESS") ==  -1)
+            {
+                Log.d(TAG, "getPaymentStatus error:"+status);
+                YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(false,initSdkData.payType);
+            }
+            else
+            {
+
+                String content = jsonObject.getString("content");
+                JSONObject contentJsonObject = new JSONObject(content);
+
+                JSONArray paymentKeyList = contentJsonObject.getJSONArray("paymentKeyList");
+                List<String> list = new ArrayList<>();
+                for(int i=0;i<paymentKeyList.length();i++)
+                {
+                    list.add(paymentKeyList.get(i).toString());
+                }
+
+                if(paymentKeyList.length() <= 0)
+                {
+                    initSdkData.payType.add(InitSdkData.PayType.UNAVAILABLE) ;
+                }
+                else
+                {
+                    if(list.indexOf("OP_DCB_BEELINE") != -1)
+                    {
+                        initSdkData.payType.add(InitSdkData.PayType.OP_DCB_BEELINE) ;
+                    }
+                    if(list.indexOf("OP_DCB") != -1)
+                    {
+                        initSdkData.payType.add(InitSdkData.PayType.OP_DCB) ;
+                    }
+                    if(list.indexOf("OP_SMS") != -1)
+                    {
+                        initSdkData.payType.add(InitSdkData.PayType.OP_SMS) ;
+                    }
+                }
+                Log.e(TAG, "getPaymentStatus stt:"+initSdkData.payType);
+                YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(true,initSdkData.payType);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(false,initSdkData.payType);
         }
     }
 

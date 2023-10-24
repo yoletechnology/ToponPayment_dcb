@@ -43,6 +43,19 @@ public class NetworkRequest {
         Log.d(TAG, "initAppBySdk"+res);
         YoleSdkMgr.getsInstance().user.decodeInitAppBySdk(res);
     }
+    public void getPaymentStatus(String mcc,String mnc) throws Exception {
+
+        Log.d(TAG, "getPaymentStatus mcc:"+mcc+";mnc:"+mnc);
+
+        String formBody = "";
+        formBody += "mcc="+mcc;
+        formBody += "&mnc="+mnc;
+
+        String res = NetUtil.sendGet("https://api.yolegames.com",formBody);
+        Log.d(TAG, "getPaymentStatus"+res);
+        YoleSdkMgr.getsInstance().user.getPaymentStatus(res);
+    }
+
     public void initDcbPayment(String amount,String orderNumber,String countryCode,String mcc,String mnc,String cpCode) throws Exception {
 
         JSONObject formBody = new JSONObject ();
@@ -68,7 +81,7 @@ public class NetworkRequest {
         String formBody = "";
         formBody += "billingNumber="+orderNumber;
 
-        String res = NetUtil.sendGet("api/RUPayment/getPaymentStatus",formBody);
+        String res = NetUtil.sendGet("https://api.yolesdk.com/api/RUPayment/getPaymentStatus",formBody);
         Log.d(TAG, "getPaymentStatus"+res);
         YoleSdkMgr.getsInstance().user.decodeDcbPaymentStatus(res);
     }
