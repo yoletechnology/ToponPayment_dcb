@@ -13,11 +13,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.internal.http.HttpHeaders;
+import okhttp3.internal.http2.Header;
 
 public class NetUtil{
     public static String TAG = "Yole_NetUtil";
@@ -41,12 +45,29 @@ public class NetUtil{
         Log.d(TAG, "url:"+url);
         Log.d(TAG, "FormBody:"+formBody.toString());
 
-        Request request = new Request.Builder()
-                .url(url)
-                .addHeader("appkey",YoleSdkMgr.getsInstance().user.getAppkey())
-                .addHeader("Content-Type", "application/json")
-                .post(requestBody)
-                .build();
+        Request request = null;
+        String userCode = YoleSdkMgr.getsInstance().user.initSdkData.userCode;
+        Log.d(TAG, "userCode:"+userCode);
+        if(userCode.length() >0)
+        {
+            request = new Request.Builder()
+                    .url(url)
+                    .addHeader("appkey",YoleSdkMgr.getsInstance().user.getAppkey())
+                    .addHeader("userCode",userCode)
+                    .addHeader("Content-Type", "application/json")
+                    .post(requestBody)
+                    .build();
+        }
+        else
+        {
+            request = new Request.Builder()
+                    .url(url)
+                    .addHeader("appkey",YoleSdkMgr.getsInstance().user.getAppkey())
+                    .addHeader("Content-Type", "application/json")
+                    .post(requestBody)
+                    .build();
+        }
+
 
         try {
             // 执行这个请求对象

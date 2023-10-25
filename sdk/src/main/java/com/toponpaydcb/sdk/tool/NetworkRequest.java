@@ -56,15 +56,15 @@ public class NetworkRequest {
         YoleSdkMgr.getsInstance().user.getPaymentStatus(res);
     }
 
-    public void initDcbPayment(String amount,String orderNumber,String countryCode,String mcc,String mnc,String cpCode) throws Exception {
+    public void initDcbPayment(String amount,String orderNumber,String language,String mcc,String mnc,String cpCode) throws Exception {
 
         JSONObject formBody = new JSONObject ();
         if(amount.length() > 0)
             formBody.put("amount",amount);
         if(orderNumber.length() > 0)
             formBody.put("orderNumber",orderNumber);
-        if(countryCode.length() > 0)
-            formBody.put("countryCode",countryCode);
+        if(language.length() > 0)
+            formBody.put("language",language);
         if(mcc.length() > 0)
             formBody.put("mcc",mcc);
         if(mnc.length() > 0)

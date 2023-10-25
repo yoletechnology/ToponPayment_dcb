@@ -27,6 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -48,6 +49,7 @@ public class PhoneInfo {
     public static String mcc_sim = "";//mcc
     public static String mnc_sim = "";//mnc
     public static String sim = "";
+    public static String language = "en";//系统语言
     public static String[] mobile = new String[2];
     public PhoneInfo (Context activity)
     {
@@ -69,6 +71,8 @@ public class PhoneInfo {
         mnc_sim = SimOperator[5];
         Log.i(TAG, "network mcc+mnc:"+network);
         Log.i(TAG, "sim mcc+mnc:"+sim);
+        language = getLanguage();
+        Log.i(TAG, "language:"+language);
 
         try {
             getVersionName();
@@ -92,6 +96,13 @@ public class PhoneInfo {
                 }
             }
         }).start();
+
+    }
+    /**获取系统语言*/
+    private static String getLanguage()
+    {
+        Locale locale = Locale.getDefault();
+        return locale.getLanguage() + "-"+ locale.getCountry();
 
     }
     /**获取国家码**/

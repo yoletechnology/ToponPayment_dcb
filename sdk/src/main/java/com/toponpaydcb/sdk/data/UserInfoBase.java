@@ -77,7 +77,7 @@ public class UserInfoBase {
         {
             return YoleSdkDefaultValue.Demo_CountryCode;
         }
-        return info.countryCode;
+        return info.countryCode.toUpperCase();
     }
     public  String getImei()
     {
@@ -135,6 +135,11 @@ public class UserInfoBase {
     {
         return amount;
     }
+    public  String getLanguage()
+    {
+        return info.language;
+    }
+
     public  void setAmount(String value)
     {
         amount = value;

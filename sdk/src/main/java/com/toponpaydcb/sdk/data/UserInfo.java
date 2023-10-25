@@ -78,6 +78,10 @@ public class UserInfo extends UserInfoBase{
     {
         return super.getAmount();
     }
+    public  String getLanguage()
+    {
+        return super.getLanguage();
+    }
     public  CallBackFunction getPayCallBack()
     {
         return super.getPayCallBack();

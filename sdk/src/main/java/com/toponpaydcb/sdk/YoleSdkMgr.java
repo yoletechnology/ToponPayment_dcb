@@ -101,7 +101,7 @@ public class YoleSdkMgr extends YoleSdkBase{
                     request.initDcbPayment(
                             user.getAmount(),
                             user.getPayOrderNum(),
-                            user.getCountryCode(),
+                            user.getLanguage(),
                             user.getMcc(),
                             user.getMnc(),
                             user.getCpCode()
