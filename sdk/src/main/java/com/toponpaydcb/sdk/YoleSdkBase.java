@@ -1,5 +1,6 @@
 package com.toponpaydcb.sdk;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -15,6 +16,7 @@ import com.toponpaydcb.sdk.data.init.YoleInitConfig;
 //import com.yolesdk.sdk.ru_sms.SendSms;
 import com.toponpaydcb.sdk.tool.NetworkRequest;
 import com.toponpaydcb.sdk.R;
+import com.toponpaydcb.sdk.tool.YolePermissionUtils;
 
 import java.io.IOException;
 import java.net.URL;
@@ -113,26 +115,7 @@ public class YoleSdkBase {
             }
         }).start();
     }
-    public void getPaymentStatus(PaymentStatusCallBack _callBack) {
 
-        paymentStatusCallBack = _callBack;
-        String mcc = user.getMcc();
-        String mnc = user.getMnc();
-        new Thread(new Runnable(){
-            @Override
-            public void run() {
-                try {
-                    request.getPaymentStatus(
-                            mcc,
-                            mnc
-                    );
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
     public void initBasicSdkResult(boolean result,String info) {
         if(result == true && initBasicSdkBack != null)
         {

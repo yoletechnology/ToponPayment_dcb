@@ -10,7 +10,7 @@ import com.toponpaydcb.sdk.callback.CallBackFunction;
 
 public class UserInfoBase {
     protected static Context act;
-    protected static PhoneInfo info =  null;
+    public static PhoneInfo info =  null;
 //    protected static PayInfo payInfo =  null;
     protected static YoleInitConfig config =  null;
     protected static String phoneNumber = "";//bigossp sdk用到的=》手机号

@@ -2,6 +2,7 @@ package com.toponpaydcb.sdk.tool;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -17,13 +18,17 @@ import android.os.Looper;
 import android.os.Parcel;
 import android.os.RemoteException;
 import android.provider.Settings;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
@@ -32,7 +37,7 @@ import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class PhoneInfo {
-    public Context m_activity = null;
+    public Context m_context = null;
     public static String TAG = "Yole_PhoneInfo";
     public static String countryCode = "";//国家码
     public static String imei = "";//imei
@@ -51,17 +56,19 @@ public class PhoneInfo {
     public static String sim = "";
     public static String language = "en";//系统语言
     public static String[] mobile = new String[2];
-    public PhoneInfo (Context activity)
-    {
-        m_activity = activity;
-        countryCode = getDeviceCountryCode(activity);
-        Log.d(TAG, "countryCode:"+countryCode);
-        imei = DeviceIdFactory.getInstance(activity).getDeviceUuid();
-        Log.d(TAG, "imei:"+imei);
+
+    public PhoneInfo(Context context) {
+        m_context = context;
+        countryCode = getDeviceCountryCode(m_context);
+        Log.d(TAG, "countryCode:" + countryCode);
+        imei = DeviceIdFactory.getInstance(m_context).getDeviceUuid();
+        Log.d(TAG, "imei:" + imei);
         mac = this.getAddress();
-        Log.d(TAG, "mac:"+mac);
-        packageName = activity.getPackageName();
-        Log.d(TAG, "packageName:"+packageName);
+        Log.d(TAG, "mac:" + mac);
+        packageName = m_context.getPackageName();
+        Log.d(TAG, "packageName:" + packageName);
+        language = getLanguage();
+        Log.i(TAG, "language:" + language);
         String[] SimOperator = this.getSimOperatorName();
         network = SimOperator[0];
         mcc_network = SimOperator[1];
@@ -69,55 +76,84 @@ public class PhoneInfo {
         sim = SimOperator[3];
         mcc_sim = SimOperator[4];
         mnc_sim = SimOperator[5];
-        Log.i(TAG, "network mcc+mnc:"+network);
-        Log.i(TAG, "sim mcc+mnc:"+sim);
-        language = getLanguage();
-        Log.i(TAG, "language:"+language);
+        Log.i(TAG, "network mcc+mnc:" + network);
+        Log.i(TAG, "sim mcc+mnc:" + sim);
 
         try {
             getVersionName();
-            Log.d(TAG, "VersionName:"+VersionName);
-            Log.d(TAG, "appName:"+appName);
-            Log.d(TAG, "icon:"+icon);
+            Log.d(TAG, "VersionName:" + VersionName);
+            Log.d(TAG, "appName:" + appName);
+            Log.d(TAG, "icon:" + icon);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        phoneModel =  android.os.Build.BRAND +" "+android.os.Build.MODEL;
-        Log.d(TAG, "phoneModel:"+phoneModel);
+        phoneModel = Build.BRAND + " " + Build.MODEL;
+        Log.d(TAG, "phoneModel:" + phoneModel);
 
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    AdvertisingIdClient.AdInfo adInfo = AdvertisingIdClient.getAdvertisingIdInfo(m_activity);
+                    AdvertisingIdClient.AdInfo adInfo = AdvertisingIdClient.getAdvertisingIdInfo(m_context);
                     gaid = adInfo.getId();
-                    Log.d(TAG, "gaid:"+gaid);
+                    Log.d(TAG, "gaid:" + gaid);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }).start();
 
-    }
-    /**获取系统语言*/
-    private static String getLanguage()
-    {
-        Locale locale = Locale.getDefault();
-        return locale.getLanguage() + "-"+ locale.getCountry();
 
     }
+
+    public void checkMcc(Activity act) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+
+            SubscriptionManager mSubscriptionManager = (SubscriptionManager) act.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+            if (ActivityCompat.checkSelfPermission(act, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+
+            List<SubscriptionInfo> subscriptionInfoList = mSubscriptionManager.getActiveSubscriptionInfoList();
+            for(int i=0;i<subscriptionInfoList.size();i++)
+            {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    mcc_sim = subscriptionInfoList.get(i).getMccString();
+                    mnc_sim = subscriptionInfoList.get(i).getMncString();
+                    Log.e(TAG,"卡"+(i+1)+"_1Mcc="+ subscriptionInfoList.get(i).getMccString());
+                    Log.e(TAG,"卡"+(i+1)+"_1Mnc="+ subscriptionInfoList.get(i).getMncString());
+                }
+                else
+                {
+                    mcc_sim = ""+subscriptionInfoList.get(i).getMcc();
+                    mnc_sim = ""+subscriptionInfoList.get(i).getMnc();
+                    Log.e(TAG,"卡"+(i+1)+"_1Mcc="+ subscriptionInfoList.get(i).getMcc());
+                    Log.e(TAG,"卡"+(i+1)+"_1Mnc="+ subscriptionInfoList.get(i).getMnc());
+                }
+                break;
+            }
+        }
+        Log.i(TAG, "SubscriptionInfo mcc:"+mcc_sim+";mnc_sim:" + mnc_sim);
+    }
+    /**获取系统语言*/
+    private static String getLanguage() {
+        Locale locale = Locale.getDefault();
+        return locale.getLanguage() + "-" + locale.getCountry();
+
+    }
+
     /**获取国家码**/
     private static String getDeviceCountryCode(Context context) {
 
         String countryCode;
 
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        Log.d(TAG, "---------------------------------------getDeviceCountryCode"+(tm != null));
-        if(tm != null) {
+        Log.d(TAG, "---------------------------------------getDeviceCountryCode" + (tm != null));
+        if (tm != null) {
 
             // query first getSimCountryIso()
 
             countryCode = tm.getSimCountryIso();
-            Log.d(TAG, "---------------------------------------getDeviceCountryCode=="+countryCode);
+            Log.d(TAG, "---------------------------------------getDeviceCountryCode==" + countryCode);
             if (countryCode != null && countryCode.length() == 2)
 
                 return countryCode;//.toLowerCase();
@@ -163,8 +199,9 @@ public class PhoneInfo {
         return "us";
 
     }
+
     /**获取mac地址**/
-    private  String getAddress() {
+    private String getAddress() {
         try {
             List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
             for (NetworkInterface nif : all) {
@@ -190,22 +227,21 @@ public class PhoneInfo {
     }
 
     //获取版本名
-    private  void  getVersionName ()throws Exception
-    {
+    private void getVersionName() throws Exception {
         // 获取packagemanager的实例
-        PackageManager packageManager = m_activity.getPackageManager();
+        PackageManager packageManager = m_context.getPackageManager();
         // getPackageName()是你当前类的包名
-        PackageInfo packInfo = packageManager.getPackageInfo(m_activity.getPackageName(), 0);
+        PackageInfo packInfo = packageManager.getPackageInfo(m_context.getPackageName(), 0);
         VersionName = packInfo.versionName;
         appName = packInfo.applicationInfo.loadLabel(packageManager).toString();
         icon = packInfo.applicationInfo.loadIcon(packageManager);
     }
-    private   String[] getSimOperatorName() {
 
-        TelephonyManager tm = (TelephonyManager) m_activity.getSystemService(Context.TELEPHONY_SERVICE);
-        //用于判断拨号那张卡的运营商
+    private String[] getSimOperatorName() {
+
+        String[] a = new String[10];
+        TelephonyManager tm = (TelephonyManager) m_context.getSystemService(Context.TELEPHONY_SERVICE);
         String networkOperator = tm.getNetworkOperator();
-        String[] a= new String[10];
         a[0] = ""+networkOperator;
         if(networkOperator.length() <=0)
         {
@@ -447,4 +483,6 @@ class AdvertisingIdClient {
             return limitAdTracking;
         }
     }
+
+
 }
