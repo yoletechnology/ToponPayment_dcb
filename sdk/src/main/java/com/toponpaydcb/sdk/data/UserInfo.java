@@ -276,6 +276,7 @@ public class UserInfo extends UserInfoBase{
     }
     public  void getPaymentStatus(String res)
     {
+        initSdkData.payType.clear();
         if(res.length() <= 0)
         {
             Log.e(TAG, "getPaymentStatus:"+res);
