@@ -26,6 +26,8 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.toponpaydcb.sdk.YoleSdkMgr;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
@@ -50,10 +52,10 @@ public class PhoneInfo {
     public static String gaid = "";//gaid
     public static String mcc_network = "";//mcc
     public static String mnc_network = "";//mnc
-    public static String network = "";
+//    public static String network = "";
     public static String mcc_sim = "";//mcc
     public static String mnc_sim = "";//mnc
-    public static String sim = "";
+//    public static String sim = "";
     public static String language = "en";//系统语言
     public static String[] mobile = new String[2];
 
@@ -69,15 +71,21 @@ public class PhoneInfo {
         Log.d(TAG, "packageName:" + packageName);
         language = getLanguage();
         Log.i(TAG, "language:" + language);
-        String[] SimOperator = this.getSimOperatorName();
-        network = SimOperator[0];
-        mcc_network = SimOperator[1];
-        mnc_network = SimOperator[2];
-        sim = SimOperator[3];
-        mcc_sim = SimOperator[4];
-        mnc_sim = SimOperator[5];
-        Log.i(TAG, "network mcc+mnc:" + network);
-        Log.i(TAG, "sim mcc+mnc:" + sim);
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            String[] SimOperator = this.getSimOperatorName();
+//            network = SimOperator[0];
+            mcc_network = SimOperator[1];
+            mnc_network = SimOperator[2];
+//            sim = SimOperator[3];
+            mcc_sim = SimOperator[4];
+            mnc_sim = SimOperator[5];
+        }
+        else
+        {
+            updateMccOrMnc();
+        }
+        Log.i(TAG, "network mcc:"+mcc_network+";mnc:" + mnc_network);
+        Log.i(TAG, "sim mcc+mnc:"+mcc_sim+";mnc:" + mnc_sim);
 
         try {
             getVersionName();
@@ -105,35 +113,7 @@ public class PhoneInfo {
 
     }
 
-    public void checkMcc(Activity act) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
 
-            SubscriptionManager mSubscriptionManager = (SubscriptionManager) act.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
-            if (ActivityCompat.checkSelfPermission(act, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-
-            List<SubscriptionInfo> subscriptionInfoList = mSubscriptionManager.getActiveSubscriptionInfoList();
-            for(int i=0;i<subscriptionInfoList.size();i++)
-            {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    mcc_sim = subscriptionInfoList.get(i).getMccString();
-                    mnc_sim = subscriptionInfoList.get(i).getMncString();
-                    Log.e(TAG,"卡"+(i+1)+"_1Mcc="+ subscriptionInfoList.get(i).getMccString());
-                    Log.e(TAG,"卡"+(i+1)+"_1Mnc="+ subscriptionInfoList.get(i).getMncString());
-                }
-                else
-                {
-                    mcc_sim = ""+subscriptionInfoList.get(i).getMcc();
-                    mnc_sim = ""+subscriptionInfoList.get(i).getMnc();
-                    Log.e(TAG,"卡"+(i+1)+"_1Mcc="+ subscriptionInfoList.get(i).getMcc());
-                    Log.e(TAG,"卡"+(i+1)+"_1Mnc="+ subscriptionInfoList.get(i).getMnc());
-                }
-                break;
-            }
-        }
-        Log.i(TAG, "SubscriptionInfo mcc:"+mcc_sim+";mnc_sim:" + mnc_sim);
-    }
     /**获取系统语言*/
     private static String getLanguage() {
         Locale locale = Locale.getDefault();
@@ -236,7 +216,30 @@ public class PhoneInfo {
         appName = packInfo.applicationInfo.loadLabel(packageManager).toString();
         icon = packInfo.applicationInfo.loadIcon(packageManager);
     }
+    //更新mcc和mnc
+    public void updateMccOrMnc()
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            SubscriptionManager mSubscriptionManager = (SubscriptionManager) m_context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+            List<SubscriptionInfo> subscriptionInfoList = mSubscriptionManager.getActiveSubscriptionInfoList();
+            for(int i=0;i<subscriptionInfoList.size();i++)
+            {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    mcc_sim = subscriptionInfoList.get(i).getMccString();
+                    mnc_sim = subscriptionInfoList.get(i).getMncString();
+                }
+                else
+                {
+                    mcc_sim = ""+subscriptionInfoList.get(i).getMcc();
+                    mnc_sim = ""+subscriptionInfoList.get(i).getMnc();
+                }
+                Log.e(TAG,"卡"+(i+1)+"_1Mcc="+ subscriptionInfoList.get(i).getMcc());
+                Log.e(TAG,"卡"+(i+1)+"_1Mnc="+ subscriptionInfoList.get(i).getMnc());
+                break;
+            }
+        }
 
+    }
     private String[] getSimOperatorName() {
 
         String[] a = new String[10];

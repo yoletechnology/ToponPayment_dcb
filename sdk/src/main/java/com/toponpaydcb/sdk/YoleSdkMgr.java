@@ -1,6 +1,5 @@
 package com.toponpaydcb.sdk;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
@@ -11,7 +10,6 @@ import com.toponpaydcb.sdk.callback.PaymentStatusCallBackFunction;
 import com.toponpaydcb.sdk.data.InitSdkData;
 import com.toponpaydcb.sdk.dcb.PaymentView;
 import com.toponpaydcb.sdk.callback.CallBackFunction;
-import com.toponpaydcb.sdk.tool.YolePermissionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +48,22 @@ public class YoleSdkMgr extends YoleSdkBase{
         }
 
         return new ArrayList();
+    }
+    public String getMnc()
+    {
+        return "";
+    }
+    public void setMnc(String mnc)
+    {
+        this.user.info.mnc_sim = mnc;
+    }
+    public String getMcc()
+    {
+        return "";
+    }
+    public void setMcc(String mnc)
+    {
+        this.user.info.mcc_sim = mnc;
     }
     /*****************************************************************/
     /************************bcd支付*********************************/
@@ -159,44 +173,41 @@ public class YoleSdkMgr extends YoleSdkBase{
     }
 
     /**获取支付方式*/
-    public static final String[] PaymentStatus_PERMISSIONS = {Manifest.permission.READ_PHONE_STATE};
-    public void getPaymentStatus(Activity act, PaymentStatusCallBack _callBack) {
-        paymentStatusCallBack = _callBack;
-        YolePermissionUtils.requestPermissions(act,  PaymentStatus_PERMISSIONS, 1,
-                new YolePermissionUtils.OnPermissionListener() {//实现接口方法
+    public void getPaymentStatus(PaymentStatusCallBack _callBack) {
 
-                    @Override
-                    public void onPermissionGranted() {//获取权限成功
-                        Log.d(TAG, "获取权限成功: ");
+        user.info.updateMccOrMnc();
 
-                        user.info.checkMcc(act);
-                        String mcc = user.getMcc();
-                        String mnc = user.getMnc();
-                        new Thread(new Runnable(){
-                            @Override
-                            public void run() {
-                                try {
-                                    request.getPaymentStatus(
-                                            mcc,
-                                            mnc
-                                    );
-
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).start();
-                    }
-
-                    @Override
-                    public void onPermissionDenied() {//获取权限失败
-                        Log.d(TAG, "获取权限失败: ");
-                        YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(false, user.initSdkData.payType);
-                    }
-                });
-
-
+        this.getPaymentStatus(user.getMcc(),user.getMnc(),_callBack);
     }
+
+    public void getPaymentStatus(String mcc, String mnc, PaymentStatusCallBack _callBack) {
+
+
+
+        if(mcc.length() <= 0)
+            mcc = user.getMcc();
+        if(mnc.length() <= 0)
+            mnc = user.getMnc();
+
+        String finalMcc = mcc;
+        String finalMnc = mnc;
+        paymentStatusCallBack = _callBack;
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    request.getPaymentStatus(
+                            finalMcc,
+                            finalMnc
+                    );
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
 
 
 }

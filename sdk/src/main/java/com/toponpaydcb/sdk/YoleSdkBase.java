@@ -1,9 +1,7 @@
 package com.toponpaydcb.sdk;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.widget.Toast;
@@ -13,14 +11,10 @@ import com.toponpaydcb.sdk.callback.InitCallBackFunction;
 import com.toponpaydcb.sdk.callback.PaymentStatusCallBack;
 import com.toponpaydcb.sdk.data.UserInfo;
 import com.toponpaydcb.sdk.data.init.YoleInitConfig;
-//import com.yolesdk.sdk.ru_sms.SendSms;
 import com.toponpaydcb.sdk.tool.NetworkRequest;
-import com.toponpaydcb.sdk.R;
-import com.toponpaydcb.sdk.tool.YolePermissionUtils;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Timer;
 
 public class YoleSdkBase {
     private String TAG = "Yole_YoleSdkBase";
