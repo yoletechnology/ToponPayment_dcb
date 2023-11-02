@@ -59,7 +59,7 @@ public class LoadingDialog extends Dialog {
         this.setContentView(R.layout.dialog_loading);
 
         //设置dialog属性
-        setCancelable(true);
+        setCancelable(false);
         setCanceledOnTouchOutside(false);
 
         iv_ing = findViewById(R.id.iv_ing);

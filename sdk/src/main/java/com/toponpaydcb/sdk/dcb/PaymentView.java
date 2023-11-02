@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
@@ -99,6 +100,21 @@ public class PaymentView extends Activity {
         webSettings.setSaveFormData(true);
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
         webSettings.setLoadsImagesAutomatically(true);
+//        webview.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+//        webview.getSettings().setLoadWithOverviewMode(true);
+//        webview.setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                Log.e(TAG, "webview keyCode：" + keyCode);
+//                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+//                    if (keyCode == KeyEvent.KEYCODE_BACK ) {  //表示按返回键 时的操作
+////                        mWebView.goBack();   //后退
+//                        return true;    //已处理
+//                    }
+//                }
+//                return false;
+//            }
+//        });
 
 
         webview.registerHandler("getCountryCode", new BridgeHandler() {
@@ -138,4 +154,14 @@ public class PaymentView extends Activity {
         });
         webview.loadUrl(url);
     }
+
+    @Override //当点击了返回键并且能够返回的时候
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.e(TAG, "onKeyDown：" + keyCode);
+        if(keyCode==KeyEvent.KEYCODE_BACK ){ //如果点击了返回键并且webView能够返回
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 }
