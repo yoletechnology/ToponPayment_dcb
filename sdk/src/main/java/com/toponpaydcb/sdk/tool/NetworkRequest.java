@@ -43,15 +43,18 @@ public class NetworkRequest {
         Log.d(TAG, "initAppBySdk"+res);
         YoleSdkMgr.getsInstance().user.decodeInitAppBySdk(res);
     }
-    public void getPaymentStatus(String mcc,String mnc) throws Exception {
+    public void getPaymentKeyList(String MccWithMnc1,String MccWithMnc2) throws Exception {
 
-        Log.d(TAG, "getPaymentStatus mcc:"+mcc+";mnc:"+mnc);
+        Log.d(TAG, "getPaymentKeyList MccWithMnc1:"+MccWithMnc1+";MccWithMnc2:"+MccWithMnc2);
 
         String formBody = "";
-        formBody += "mcc="+mcc;
-        formBody += "&mnc="+mnc;
+        formBody += "mccWithMnc=";
+        formBody += MccWithMnc1 ;
 
-        String res = NetUtil.sendGet("https://api.yolegames.com",formBody);
+        if(MccWithMnc2.length() > 0)
+            formBody +=  ","+MccWithMnc2;
+
+        String res = NetUtil.sendGet("https://api.yolegames.com/api/operator/getPaymentKeyList",formBody);
         Log.d(TAG, "getPaymentStatus"+res);
         YoleSdkMgr.getsInstance().user.getPaymentStatus(res);
     }

@@ -49,22 +49,6 @@ public class YoleSdkMgr extends YoleSdkBase{
 
         return new ArrayList();
     }
-    public String getMnc()
-    {
-        return "";
-    }
-    public void setMnc(String mnc)
-    {
-        this.user.info.mnc_sim = mnc;
-    }
-    public String getMcc()
-    {
-        return "";
-    }
-    public void setMcc(String mnc)
-    {
-        this.user.info.mcc_sim = mnc;
-    }
     /*****************************************************************/
     /************************bcd支付*********************************/
     /*****************************************************************/
@@ -177,28 +161,21 @@ public class YoleSdkMgr extends YoleSdkBase{
 
         user.info.updateMccOrMnc();
 
-        this.getPaymentStatus(user.getMcc(),user.getMnc(),_callBack);
+        this.getPaymentStatus(user.info.mccWithMnc.getMccWithMnc(0),user.info.mccWithMnc.getMccWithMnc(1),_callBack);
     }
 
-    public void getPaymentStatus(String mcc, String mnc, PaymentStatusCallBack _callBack) {
+    public void getPaymentStatus(String MccWithMnc1, String MccWithMnc2, PaymentStatusCallBack _callBack) {
 
-
-
-        if(mcc.length() <= 0)
-            mcc = user.getMcc();
-        if(mnc.length() <= 0)
-            mnc = user.getMnc();
-
-        String finalMcc = mcc;
-        String finalMnc = mnc;
+        String finalMccWithMnc1 = MccWithMnc1;
+        String finalMccWithMnc2 = MccWithMnc2;
         paymentStatusCallBack = _callBack;
         new Thread(new Runnable(){
             @Override
             public void run() {
                 try {
-                    request.getPaymentStatus(
-                            finalMcc,
-                            finalMnc
+                    request.getPaymentKeyList(
+                            finalMccWithMnc1,
+                            finalMccWithMnc2
                     );
 
                 } catch (Exception e) {

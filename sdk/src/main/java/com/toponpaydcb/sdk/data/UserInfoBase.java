@@ -61,7 +61,7 @@ public class UserInfoBase {
         {
             return "250";
         }
-        return info.mcc_sim;
+        return info.mccWithMnc.getMcc(0);
     }
     public  String getMnc()
     {
@@ -69,7 +69,7 @@ public class UserInfoBase {
         {
             return "99";
         }
-        return info.mnc_sim;
+        return info.mccWithMnc.getMnc(0);
     }
     public  String getCountryCode()
     {

@@ -296,11 +296,7 @@ public class UserInfo extends UserInfoBase{
             }
             else
             {
-
-                String content = jsonObject.getString("content");
-                JSONObject contentJsonObject = new JSONObject(content);
-
-                JSONArray paymentKeyList = contentJsonObject.getJSONArray("paymentKeyList");
+                JSONArray paymentKeyList = jsonObject.getJSONArray("content");
                 List<String> list = new ArrayList<>();
                 for(int i=0;i<paymentKeyList.length();i++)
                 {
