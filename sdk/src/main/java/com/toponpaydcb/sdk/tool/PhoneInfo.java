@@ -227,21 +227,24 @@ public class PhoneInfo {
             SubscriptionManager mSubscriptionManager = (SubscriptionManager) m_context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
 
             @SuppressLint("MissingPermission") List<SubscriptionInfo> subscriptionInfoList = mSubscriptionManager.getActiveSubscriptionInfoList();
-            for(int i=0;i<subscriptionInfoList.size();i++)
+            if(subscriptionInfoList != null)
             {
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    mcc[i] = subscriptionInfoList.get(i).getMccString();
-                    mnc[i] = subscriptionInfoList.get(i).getMncString();
-                }
-                else
+                for(int i=0;i<subscriptionInfoList.size();i++)
                 {
-                    mcc[i] = ""+subscriptionInfoList.get(i).getMcc();
-                    mnc[i] = ""+subscriptionInfoList.get(i).getMnc();
-                }
 
-                Log.e(TAG,"卡"+(i+1)+"_1Mcc="+ mcc[i]);
-                Log.e(TAG,"卡"+(i+1)+"_1Mnc="+ mnc[i]);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        mcc[i] = subscriptionInfoList.get(i).getMccString();
+                        mnc[i] = subscriptionInfoList.get(i).getMncString();
+                    }
+                    else
+                    {
+                        mcc[i] = ""+subscriptionInfoList.get(i).getMcc();
+                        mnc[i] = ""+subscriptionInfoList.get(i).getMnc();
+                    }
+
+                    Log.e(TAG,"卡"+(i+1)+"_1Mcc="+ mcc[i]);
+                    Log.e(TAG,"卡"+(i+1)+"_1Mnc="+ mnc[i]);
+                }
             }
         }
         mccWithMnc.setPhoneMccMnc(mcc,mnc);

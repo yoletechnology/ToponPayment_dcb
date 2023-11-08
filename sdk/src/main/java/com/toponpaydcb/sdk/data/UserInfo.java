@@ -124,6 +124,7 @@ public class UserInfo extends UserInfoBase{
     }
     public  void decodeInitDcbPayment(String res)
     {
+
         if(res.length() <= 0)
         {
             Log.e(TAG, "InitDcbPayment:"+res);
@@ -225,7 +226,7 @@ public class UserInfo extends UserInfoBase{
                 String productIcon = contentJsonObject.getString("productIcon");
                 String companyName = contentJsonObject.getString("companyName");
                 String currencySymbol = contentJsonObject.getString("currencySymbol");
-                boolean adsOpen = contentJsonObject.optBoolean("adsOpen");
+//
                 String areaCode = contentJsonObject.getString("areaCode");
 //                int currencyDecimal = contentJsonObject.getInt("currencyDecimal");
                 JSONArray smsFeeList = contentJsonObject.getJSONArray("smsFeeList");
@@ -239,7 +240,7 @@ public class UserInfo extends UserInfoBase{
                 initSdkData.productIcon = productIcon;
                 initSdkData.companyName = companyName;
                 initSdkData.currencySymbol = currencySymbol;
-                initSdkData.adsOpen = adsOpen;
+
                 initSdkData.areaCode = areaCode;
 //                initSdkData.currencyDecimal = currencyDecimal;
 //                if(paymentKeyList.length() <= 0)
@@ -262,7 +263,7 @@ public class UserInfo extends UserInfoBase{
                 stt += "；productName:"+productName;
                 stt += "；companyName:"+companyName;
                 stt += "；currencySymbol:"+currencySymbol;
-                stt += "；adsOpen:"+adsOpen;
+
                 stt += "；smsFeeList:"+smsFeeList;
                 Log.e(TAG, "decodeInitAppBySdk stt:"+stt);
                 YoleSdkMgr.getsInstance().initBasicSdkResult(true,"errorCode:"+errorCode+";message="+message);
@@ -296,6 +297,9 @@ public class UserInfo extends UserInfoBase{
             }
             else
             {
+                boolean adsOpen = jsonObject.optBoolean("adsOpen");
+                initSdkData.adsOpen = adsOpen;
+
                 JSONArray paymentKeyList = jsonObject.getJSONArray("content");
                 List<String> list = new ArrayList<>();
                 for(int i=0;i<paymentKeyList.length();i++)
@@ -322,7 +326,10 @@ public class UserInfo extends UserInfoBase{
                         initSdkData.payType.add(InitSdkData.PayType.OP_SMS) ;
                     }
                 }
-                Log.e(TAG, "getPaymentStatus stt:"+initSdkData.payType);
+                String stt = "";
+                stt += "；adsOpen:"+adsOpen;
+                stt += "；payType:"+initSdkData.payType;
+                Log.e(TAG, "getPaymentStatus stt:"+stt);
                 YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(true,initSdkData.payType);
             }
 

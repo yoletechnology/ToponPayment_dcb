@@ -37,7 +37,7 @@ public class PaymentView extends Activity {
     public String TAG = "Yole_PaymentView";
     public Activity m_activity = null;
 
-    private BridgeWebView webview;
+    private BridgeWebView webview = null;
     public static SystemBarTintManager tintManager = null;
     public int NavigationBarHeight = 0;//导航栏的高
     @Override
@@ -133,32 +133,46 @@ public class PaymentView extends Activity {
             @Override
             public void handler(String data, CallBackFunction function) {
 
-                Log.e("TAG", "js返回：" + data);
-                try {
-
-                    JSONObject jsonObject = new JSONObject(data);
-                    String status = jsonObject.getString("status");
-                    String billingNumber = jsonObject.getString("billingNumber");
-
-                    boolean result = (status.indexOf("paid") != -1 && status.length() == "paid".length());
-                    YoleSdkMgr.getsInstance().user.getPayCallBack().onCallBack(result,status,billingNumber);
-
-                    m_activity.finish();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
+                closeView(data);
             }
         });
+
+
         webview.loadUrl(url);
     }
+    public void closeView(String data)
+    {
+        Log.e("TAG", "js返回：" + data);
+        try {
 
+            JSONObject jsonObject = new JSONObject(data);
+            String status = jsonObject.getString("status");
+            String billingNumber = jsonObject.getString("billingNumber");
+
+            boolean result = (status.indexOf("paid") != -1 && status.length() == "paid".length());
+            YoleSdkMgr.getsInstance().user.getPayCallBack().onCallBack(result,status,billingNumber);
+
+            m_activity.finish();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     @Override //当点击了返回键并且能够返回的时候
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         Log.e(TAG, "onKeyDown：" + keyCode);
         if(keyCode==KeyEvent.KEYCODE_BACK ){ //如果点击了返回键并且webView能够返回
+
+            if(webview != null)
+            {
+                webview.callHandler("onNativeClickBack", "", new CallBackFunction() {
+                    @Override
+                    public void onCallBack(String data) {
+                        closeView(data);
+                    }
+                });
+            }
+
             return true;
         }
         return super.onKeyDown(keyCode, event);

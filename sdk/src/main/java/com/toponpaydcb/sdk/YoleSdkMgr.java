@@ -49,6 +49,15 @@ public class YoleSdkMgr extends YoleSdkBase{
 
         return new ArrayList();
     }
+    public boolean getAdsOpen()
+    {
+        if(this.user != null && this.user.initSdkData != null)
+        {
+            return this.user.initSdkData.adsOpen;
+        }
+
+        return false;
+    }
     /*****************************************************************/
     /************************bcd支付*********************************/
     /*****************************************************************/
