@@ -5,6 +5,6 @@ import com.toponpaydcb.sdk.data.InitSdkData;
 import java.util.List;
 
 public interface PaymentStatusCallBack {
-    public void onCallBack(boolean result, List<InitSdkData.PayType> payType);
+    public void onCallBack(boolean result, List<InitSdkData.PayType> payType,boolean adsOpen);
 }
 

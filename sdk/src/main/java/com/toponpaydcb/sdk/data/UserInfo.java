@@ -281,7 +281,7 @@ public class UserInfo extends UserInfoBase{
         if(res.length() <= 0)
         {
             Log.e(TAG, "getPaymentStatus:"+res);
-            YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(false,initSdkData.payType);
+            YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(false,initSdkData.payType,false);
             return;
         }
         try {
@@ -293,14 +293,17 @@ public class UserInfo extends UserInfoBase{
             if(status.indexOf("SUCCESS") ==  -1)
             {
                 Log.d(TAG, "getPaymentStatus error:"+status);
-                YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(false,initSdkData.payType);
+                YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(false,initSdkData.payType,false);
             }
             else
             {
-                boolean adsOpen = jsonObject.optBoolean("adsOpen");
+                String content = jsonObject.getString("content");
+                JSONObject contentJsonObject = new JSONObject(content);
+
+                boolean adsOpen = contentJsonObject.optBoolean("adsOpen");
                 initSdkData.adsOpen = adsOpen;
 
-                JSONArray paymentKeyList = jsonObject.getJSONArray("content");
+                JSONArray paymentKeyList = contentJsonObject.getJSONArray("paymentKeyList");
                 List<String> list = new ArrayList<>();
                 for(int i=0;i<paymentKeyList.length();i++)
                 {
@@ -330,12 +333,12 @@ public class UserInfo extends UserInfoBase{
                 stt += "；adsOpen:"+adsOpen;
                 stt += "；payType:"+initSdkData.payType;
                 Log.e(TAG, "getPaymentStatus stt:"+stt);
-                YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(true,initSdkData.payType);
+                YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(true,initSdkData.payType,adsOpen);
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
-            YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(false,initSdkData.payType);
+            YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(false,initSdkData.payType,false);
         }
     }
 
