@@ -140,16 +140,7 @@ public class YoleSdkBase {
             Toast.makeText(act, act.getString(R.string.countrycode_error), Toast.LENGTH_SHORT).show();
             return false;
         }
-        if(user.getMcc().length() <= 0)
-        {
-            Toast.makeText(act, act.getString(R.string.mcc_error), Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if(user.getMnc().length() <= 0)
-        {
-            Toast.makeText(act, act.getString(R.string.mnc_error), Toast.LENGTH_SHORT).show();
-            return false;
-        }
+
         if(user.getPayOrderNum().length() <= 0)
         {
             Toast.makeText(act, act.getString(R.string.payordernum_error), Toast.LENGTH_SHORT).show();
