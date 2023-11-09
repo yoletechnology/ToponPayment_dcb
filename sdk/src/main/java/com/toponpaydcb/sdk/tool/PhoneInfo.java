@@ -247,6 +247,19 @@ public class PhoneInfo {
                 }
             }
         }
+
+        if(mcc[0].length() <= 0)
+        {
+            String[] SimOperator = this.getSimOperatorName();
+            mcc[0] = SimOperator[4];
+            mcc[1] = SimOperator[1];
+
+            mnc[0] = SimOperator[5];
+            mnc[1] = SimOperator[2];
+
+            Log.e(TAG,"Mcc="+ mcc[0]+"-"+mcc[1]);
+            Log.e(TAG,"Mnc="+ mnc[0]+"-"+mnc[1]);
+        }
         mccWithMnc.setPhoneMccMnc(mcc,mnc);
     }
     private String[] getSimOperatorName() {
