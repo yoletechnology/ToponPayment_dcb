@@ -112,8 +112,6 @@ public class YoleSdkMgr extends YoleSdkBase{
                             user.getAmount(),
                             user.getPayOrderNum(),
                             user.getLanguage(),
-                            user.getMcc(),
-                            user.getMnc(),
                             user.getCpCode()
                     );
 
