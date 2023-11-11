@@ -42,6 +42,7 @@ public class NetworkRequest {
             formBody.put("versionName",versionName);
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.d(TAG, "initAppBySdk-error:"+e.toString());
         }
 
 
@@ -49,7 +50,7 @@ public class NetworkRequest {
         Log.d(TAG, "initAppBySdk"+res);
         YoleSdkMgr.getsInstance().user.decodeInitAppBySdk(res);
     }
-    public void getPaymentKeyList(String MccWithMnc1,String MccWithMnc2) throws Exception {
+    public void getPaymentKeyList(String MccWithMnc1,String MccWithMnc2) {
 
         Log.d(TAG, "getPaymentKeyList MccWithMnc1:"+MccWithMnc1+";MccWithMnc2:"+MccWithMnc2);
 
@@ -65,23 +66,29 @@ public class NetworkRequest {
         YoleSdkMgr.getsInstance().user.getPaymentStatus(res);
     }
 
-    public void initDcbPayment(String amount,String orderNumber,String language,String cpCode) throws Exception {
+    public void initDcbPayment(String amount,String orderNumber,String language,String cpCode) {
 
         JSONObject formBody = new JSONObject ();
-        if(amount.length() > 0)
-            formBody.put("amount",amount);
-        if(orderNumber.length() > 0)
-            formBody.put("orderNumber",orderNumber);
-        if(language.length() > 0)
-            formBody.put("language",language);
-        if(cpCode.length() > 0)
-            formBody.put("cpCode",cpCode);
+        try {
+            if(amount.length() > 0)
+                formBody.put("amount",amount);
+            if(orderNumber.length() > 0)
+                formBody.put("orderNumber",orderNumber);
+            if(language.length() > 0)
+                formBody.put("language",language);
+            if(cpCode.length() > 0)
+                formBody.put("cpCode",cpCode);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.d(TAG, "initDcbPayment-error:"+e.toString());
+        }
+
 
         String res = NetUtil.sendPost("api/RUPayment/initDcbPayment",formBody);
         Log.d(TAG, "initDcbPayment"+res);
         YoleSdkMgr.getsInstance().user.decodeInitDcbPayment(res);
     }
-    public void getDcbPaymentStatus(String orderNumber) throws Exception {
+    public void getDcbPaymentStatus(String orderNumber) {
 
         String formBody = "";
         formBody += "billingNumber="+orderNumber;

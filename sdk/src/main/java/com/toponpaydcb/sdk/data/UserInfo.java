@@ -89,9 +89,9 @@ public class UserInfo extends UserInfoBase{
 
     public  void decodeDcbPaymentStatus(String res)
     {
+        Log.e(TAG, "InitDcbPayment:"+res);
         if(res.length() <= 0)
         {
-            Log.e(TAG, "InitDcbPayment:"+res);
             if(backFunc != null)
                 backFunc.onCallBack(false,"","");
             return;
@@ -105,7 +105,7 @@ public class UserInfo extends UserInfoBase{
 
             if(status.indexOf("SUCCESS") ==  -1)
             {
-                backFunc.onCallBack(false,"errorCode:"+errorCode+";message:"+message,"");
+                backFunc.onCallBack(false,res,"");
             }
             else
             {
@@ -114,7 +114,8 @@ public class UserInfo extends UserInfoBase{
                 String paymentStatus = contentJsonObject.getString("paymentStatus");
                 String paymentDatetime = contentJsonObject.getString("paymentDatetime");
                 boolean result = (paymentStatus.indexOf("SUCCESSFUL") != -1 && paymentStatus.length() == "SUCCESSFUL".length());
-                backFunc.onCallBack(result,contentJsonObject.toString(),"");
+
+                backFunc.onCallBack(result,res,"");
             }
 
         } catch (JSONException e) {
@@ -124,10 +125,9 @@ public class UserInfo extends UserInfoBase{
     }
     public  void decodeInitDcbPayment(String res)
     {
-
+        Log.e(TAG, "InitDcbPayment:"+res);
         if(res.length() <= 0)
         {
-            Log.e(TAG, "InitDcbPayment:"+res);
             if(backFunc != null)
                 backFunc.onCallBack(false,"","");
             return;
@@ -141,7 +141,7 @@ public class UserInfo extends UserInfoBase{
 
             if(status.indexOf("SUCCESS") ==  -1)
             {
-                backFunc.onCallBack(false,"errorCode:"+errorCode+";message:"+message,"");
+                backFunc.onCallBack(false,res,"");
             }
             else
             {
@@ -159,9 +159,9 @@ public class UserInfo extends UserInfoBase{
     }
     public  void decodePaymentResults(String res)
     {
+        Log.e(TAG, "decodePaymentResults:"+res);
         if(res.length() <= 0)
         {
-            Log.e(TAG, "decodePaymentResults:"+res);
             if(backFunc != null)
                 backFunc.onCallBack(false,"","");
             return;
@@ -176,7 +176,7 @@ public class UserInfo extends UserInfoBase{
 
                 if(status.indexOf("SUCCESS") ==  -1)
                 {
-                    backFunc.onCallBack(false,"errorCode:"+errorCode+";message:"+message,"");
+                    backFunc.onCallBack(false,res,"");
                 }
                 else
                 {
@@ -186,7 +186,7 @@ public class UserInfo extends UserInfoBase{
                     JSONObject content1JsonObject = new JSONObject(content1);
                     String billingNumber = content1JsonObject.getString("billingNumber");
 
-                    backFunc.onCallBack(true,status,billingNumber);
+                    backFunc.onCallBack(true,res,billingNumber);
                 }
 
             } catch (JSONException e) {
@@ -198,9 +198,9 @@ public class UserInfo extends UserInfoBase{
 
     public  void decodeInitAppBySdk(String res)
     {
+        Log.e(TAG, "decodeInitAppBySdk:"+res);
         if(res.length() <= 0)
         {
-            Log.e(TAG, "decodeInitAppBySdk:"+res);
             YoleSdkMgr.getsInstance().initBasicSdkResult(false,"");
             return;
         }
@@ -213,7 +213,7 @@ public class UserInfo extends UserInfoBase{
             if(status.indexOf("SUCCESS") ==  -1)
             {
                 Log.d(TAG, "decodeInitAppBySdk error:"+status);
-                YoleSdkMgr.getsInstance().initBasicSdkResult(false,"errorCode:"+errorCode+";message="+message);
+                YoleSdkMgr.getsInstance().initBasicSdkResult(false,res);
             }
             else
             {
@@ -226,9 +226,8 @@ public class UserInfo extends UserInfoBase{
                 String productIcon = contentJsonObject.getString("productIcon");
                 String companyName = contentJsonObject.getString("companyName");
                 String currencySymbol = contentJsonObject.getString("currencySymbol");
-//
                 String areaCode = contentJsonObject.getString("areaCode");
-//                int currencyDecimal = contentJsonObject.getInt("currencyDecimal");
+
                 JSONArray smsFeeList = contentJsonObject.getJSONArray("smsFeeList");
                 List<String> list = new ArrayList<>();
                 for(int i=0;i<smsFeeList.length();i++)
@@ -240,33 +239,16 @@ public class UserInfo extends UserInfoBase{
                 initSdkData.productIcon = productIcon;
                 initSdkData.companyName = companyName;
                 initSdkData.currencySymbol = currencySymbol;
-
                 initSdkData.areaCode = areaCode;
-//                initSdkData.currencyDecimal = currencyDecimal;
-//                if(paymentKeyList.length() <= 0)
-//                {
-//                    initSdkData.payType = InitSdkData.PayType.UNAVAILABLE;
-//                }
-//                else if(list.indexOf("OP_DCB") != -1)
-//                {
-//                    initSdkData.payType = InitSdkData.PayType.OP_DCB;
-//                }
-//                else if(list.indexOf("OP_SMS") != -1)
-//                {
-//                    initSdkData.payType = InitSdkData.PayType.OP_SMS;
-//                }
-//                else
-//                {
-//                    initSdkData.payType = InitSdkData.PayType.UNAVAILABLE;
-//                }
                 String stt = "；userCode:"+userCode;
                 stt += "；productName:"+productName;
                 stt += "；companyName:"+companyName;
                 stt += "；currencySymbol:"+currencySymbol;
-
+                stt += "；areaCode:"+areaCode;
                 stt += "；smsFeeList:"+smsFeeList;
+
                 Log.e(TAG, "decodeInitAppBySdk stt:"+stt);
-                YoleSdkMgr.getsInstance().initBasicSdkResult(true,"errorCode:"+errorCode+";message="+message);
+                YoleSdkMgr.getsInstance().initBasicSdkResult(true,stt);
 
             }
 
@@ -277,11 +259,11 @@ public class UserInfo extends UserInfoBase{
     }
     public  void getPaymentStatus(String res)
     {
+        Log.e(TAG, "getPaymentStatus:"+res);
         initSdkData.payType.clear();
         if(res.length() <= 0)
         {
-            Log.e(TAG, "getPaymentStatus:"+res);
-            YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(false,initSdkData.payType,false);
+            YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(false,"",initSdkData.payType,false);
             return;
         }
         try {
@@ -293,7 +275,7 @@ public class UserInfo extends UserInfoBase{
             if(status.indexOf("SUCCESS") ==  -1)
             {
                 Log.d(TAG, "getPaymentStatus error:"+status);
-                YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(false,initSdkData.payType,false);
+                YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(false,res,initSdkData.payType,false);
             }
             else
             {
@@ -333,12 +315,12 @@ public class UserInfo extends UserInfoBase{
                 stt += "；adsOpen:"+adsOpen;
                 stt += "；payType:"+initSdkData.payType;
                 Log.e(TAG, "getPaymentStatus stt:"+stt);
-                YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(true,initSdkData.payType,adsOpen);
+                YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(true,stt,initSdkData.payType,adsOpen);
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
-            YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(false,initSdkData.payType,false);
+            YoleSdkMgr.getsInstance().paymentStatusCallBack.onCallBack(false,e.toString(),initSdkData.payType,false);
         }
     }
 
