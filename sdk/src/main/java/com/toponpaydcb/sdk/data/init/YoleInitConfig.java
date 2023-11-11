@@ -10,12 +10,13 @@ public class YoleInitConfig {
     private boolean debug=false;
     private  YoleInitDcbConfig dcbConfig = null;
     private  YoleInitRuSmsConfig ruSmsConfig = null;
-
+    private boolean isMultipleRequests=false;
     private final Map<String, String> extra = new HashMap();
 
      public YoleInitConfig() {
         this.extra.clear();
     }
+
 
     /******************************************************/
     /*******************基本信息**************************/
@@ -76,6 +77,13 @@ public class YoleInitConfig {
             this.dcbConfig = new YoleInitDcbConfig();
         }
         return this;
+    }
+    public  YoleInitConfig setMultipleRequests(boolean var1) {
+        this.isMultipleRequests = var1;
+        return this;
+    }
+    public boolean getMultipleRequests() {
+        return this.isMultipleRequests;
     }
     /******************************************************/
     /*******************Ru_Sms信息**************************/

@@ -4,13 +4,14 @@ import android.util.Log;
 
 import com.toponpaydcb.sdk.YoleSdkMgr;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 
 public class NetworkRequest {
     public String TAG = "Yole_NetworkRequest";
-    public void initAppBySdk(String mobile,String gaid,String userAgent,String imei,String mac,String countryCode,String mcc,String mnc,String cpCode,String versionName) throws Exception {
+    public void initAppBySdk(String mobile,String gaid,String userAgent,String imei,String mac,String countryCode,String mcc,String mnc,String cpCode,String versionName) {
 
         Log.d(TAG, "initAppBySdk cpCode:"+cpCode+";countryCode:"+countryCode);
         if(cpCode.length() <= 0 || countryCode.length() <= 0 )
@@ -20,24 +21,29 @@ public class NetworkRequest {
         }
 
         JSONObject formBody = new JSONObject ();
-        if(mobile.length() > 0)
-            formBody.put("mobile",mobile);
-        if(gaid.length() > 0)
-            formBody.put("gaid",gaid);
-        if(userAgent.length() > 0)
-            formBody.put("userAgent",userAgent);
-        if(imei.length() > 0)
-            formBody.put("imei",imei);
-        if(mac.length() > 0)
-            formBody.put("mac",mac);
-        if(mcc.length() > 0)
-            formBody.put("mcc",mcc);
-        if(mnc.length() > 0)
-            formBody.put("mnc",mnc);
+        try {
+            if(mobile.length() > 0) {
+                formBody.put("mobile",mobile);
+            }
+            if(gaid.length() > 0)
+                formBody.put("gaid",gaid);
+            if(userAgent.length() > 0)
+                formBody.put("userAgent",userAgent);
+            if(imei.length() > 0)
+                formBody.put("imei",imei);
+            if(mac.length() > 0)
+                formBody.put("mac",mac);
+            if(mcc.length() > 0)
+                formBody.put("mcc",mcc);
+            if(mnc.length() > 0)
+                formBody.put("mnc",mnc);
+            formBody.put("countryCode",countryCode);
+            formBody.put("cpCode",cpCode);
+            formBody.put("versionName",versionName);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-        formBody.put("countryCode",countryCode);
-        formBody.put("cpCode",cpCode);
-        formBody.put("versionName",versionName);
 
         String res = NetUtil.sendPost("api/user/initAppBySdk",formBody);
         Log.d(TAG, "initAppBySdk"+res);

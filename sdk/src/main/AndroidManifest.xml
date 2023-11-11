@@ -6,12 +6,9 @@
     <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
 
     <application>
-
         <activity
             android:name=".dcb.PaymentView"
-            android:exported="true"
-            android:theme="@style/AppTheme">
+            android:exported="true">
         </activity>
-
     </application>
 </manifest>

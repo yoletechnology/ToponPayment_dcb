@@ -4,15 +4,18 @@ import android.util.Log;
 
 import com.toponpaydcb.sdk.YoleSdkMgr;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Headers;
 import okhttp3.MediaType;
@@ -32,9 +35,13 @@ public class NetUtil{
     }
     public  static String sendPost(String url,JSONObject formBody) {
         url = "https://api.yolesdk.com/"+url;
+//        url = "https://google.com/"+url;
         //创建OkHttp客户端
-        OkHttpClient okHttpClient = new OkHttpClient();
-
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .build();
         // 封装请求体
         MediaType mediaType = MediaType.parse("application/json");
 
@@ -68,22 +75,51 @@ public class NetUtil{
                     .build();
         }
 
-
+        JSONObject jsonObject = new JSONObject();
         try {
             // 执行这个请求对象
             Response response = okHttpClient.newCall(request).execute();
             String result = response.body().string();
             Log.d(TAG, "onResponse2:"+result);
             return result;
-        } catch (IOException e) {
+        }
+        catch (SocketTimeoutException e) {
             e.printStackTrace();
-            return e.toString();
+            try {
+                jsonObject.put("status","SocketTimeoutException");
+                jsonObject.put("errorCode","-1");
+                jsonObject.put("message",e.toString());
+
+                okHttpClient.connectionPool().evictAll();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+
+            return jsonObject.toString();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            try {
+                jsonObject.put("status","IOException");
+                jsonObject.put("errorCode","-1");
+                jsonObject.put("message",e.toString());
+
+                okHttpClient.connectionPool().evictAll();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+
+            return jsonObject.toString();
         }
     }
     public  static String sendGet(String url,String formBody) {
 
         //创建OkHttp客户端
-        OkHttpClient okHttpClient = new OkHttpClient();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .build();
 
         // 封装请求体
         MediaType mediaType = MediaType.parse("application/json");
@@ -104,15 +140,27 @@ public class NetUtil{
                 .addHeader("Content-Type", "application/json")
                 .build();
 
+        JSONObject jsonObject = new JSONObject();
         try {
             // 执行这个请求对象
             Response response = okHttpClient.newCall(request).execute();
             String result = response.body().string();
             Log.d(TAG, "onResponse2:"+result);
             return result;
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
-            return e.toString();
+            try {
+                jsonObject.put("status","IOException");
+                jsonObject.put("errorCode","-1");
+                jsonObject.put("message",e.toString());
+
+                okHttpClient.connectionPool().evictAll();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+
+            return jsonObject.toString();
         }
     }
 

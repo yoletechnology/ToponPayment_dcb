@@ -18,7 +18,7 @@ public class YoleSdkMgr extends YoleSdkBase{
 
     private String TAG = "Yole_YoleSdkMgr";
     private static  YoleSdkMgr _instance = null;
-    public String ruPayOrderNum = "";
+
     public static final String RETURN_INFO = "com.toponpaydcb.sdk.info";
 
     public static YoleSdkMgr getsInstance() {
@@ -57,6 +57,10 @@ public class YoleSdkMgr extends YoleSdkBase{
         }
 
         return false;
+    }
+    public boolean getIsInitSuccess()
+    {
+        return this.isSdkInitSuccess;
     }
     /*****************************************************************/
     /************************bcd支付*********************************/

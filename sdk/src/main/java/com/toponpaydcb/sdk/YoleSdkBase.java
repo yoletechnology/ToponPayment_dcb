@@ -3,7 +3,10 @@ package com.toponpaydcb.sdk;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.toponpaydcb.sdk.callback.CallBackFunction;
@@ -15,12 +18,14 @@ import com.toponpaydcb.sdk.tool.NetworkRequest;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class YoleSdkBase {
     private String TAG = "Yole_YoleSdkBase";
     protected Context context =  null;
     protected boolean isDebugger = false;
-
+    protected boolean isSdkInitSuccess = true;
     /**各种网络接口**/
     protected NetworkRequest request = null;
     /**用户信息(通过用户设置 和 请求的返回。组装成的数据)**/
@@ -28,14 +33,18 @@ public class YoleSdkBase {
     /**YoleSdk 初始化结果的回调*/
     public CallBackFunction initBasicSdkBack = null;
     public PaymentStatusCallBack paymentStatusCallBack = null;
+    protected CallBackFunction next1 = null;
+    protected CallBackFunction next2 = null;
+    public static YoleSdkBase instance = null;
 
     /**sdk初始化的主接口*/
     public void initSdk(Context _var1, YoleInitConfig _config, InitCallBackFunction _initBack)
     {
         context = _var1;
+        instance = this;
         this.init(_var1,_config);
 
-        CallBackFunction next1 = new CallBackFunction(){
+        next1 = new CallBackFunction(){
             @Override
             public void onCallBack(boolean result, String info1, String info2) {
 
@@ -55,19 +64,32 @@ public class YoleSdkBase {
         };
 
         //初始化 基本信息的回调
-        CallBackFunction next2 = new CallBackFunction(){
+        next2 = new CallBackFunction(){
             @Override
             public void onCallBack(boolean result, String info1, String info2) {
                 Log.i(TAG,"initBasicSdk:"+result);
                 if(result == true){
+                    instance.isSdkInitSuccess = true;
                     _initBack.success(user.initSdkData);
                     next1.onCallBack(false,null,null);
                 }else{
+                    instance.isSdkInitSuccess = false;
+
                     _initBack.fail(info1);
+
+                    if(_config.getMultipleRequests() == true)
+                    {
+                        (new Timer()).schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                instance.initBasicSdk(_config.getCpCode(),_config.getUserAgent(),_config.getMobile(),instance.next2);
+                            }
+                        },1000);
+                    }
                 }
             }
         };
-        initBasicSdk(_config.getCpCode(),_config.getUserAgent(),_config.getMobile(),next2);
+        this.initBasicSdk(_config.getCpCode(),_config.getUserAgent(),_config.getMobile(),next2);
     }
     /**创建sdk内的各个功能模块*/
     protected void init(Context var1,YoleInitConfig _config)
@@ -79,6 +101,7 @@ public class YoleSdkBase {
 
     /**初始化sdk*/
     protected void initBasicSdk(String cpCode,String userAgent,String mobile,CallBackFunction callBack) {
+        Log.i(TAG,"~!~~~~~~~~~~~~~~~");
         initBasicSdkBack = callBack;
         userAgent = userAgent.length() <=0 ? user.getPhoneModel() : userAgent;
         mobile = mobile.length() <=0 ? user.getPhoneNumber() : mobile;
@@ -114,12 +137,12 @@ public class YoleSdkBase {
         if(result == true && initBasicSdkBack != null)
         {
             initBasicSdkBack.onCallBack(true,"","");
+            initBasicSdkBack = null;
         }
         else if(initBasicSdkBack != null)
         {
             initBasicSdkBack.onCallBack(false,info,"");
         }
-        initBasicSdkBack = null;
     }
 
     /**支付的可行性*/
