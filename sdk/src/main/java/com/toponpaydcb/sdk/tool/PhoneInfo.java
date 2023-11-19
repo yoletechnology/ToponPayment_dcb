@@ -40,20 +40,12 @@ public class PhoneInfo {
     public Context m_context = null;
     public static String TAG = "Yole_PhoneInfo";
     public static String countryCode = "";//国家码
-    public static String imei = "";//imei
-    public static String mac = "";//mac地址
     public static String packageName = "";//包名
     public static String appName = "";
     public static Drawable icon = null;
     public static String VersionName = "";//版本名
     public static String phoneModel = "";//手机品牌型号
     public static String gaid = "";//gaid
-    //    public static String mcc_network = "";//mcc
-//    public static String mnc_network = "";//mnc
-//    public static String network = "";
-//    public static String mcc_sim = "";//mcc
-//    public static String mnc_sim = "";//mnc
-//    public static String sim = "";
     public static PhoneMccMnc mccWithMnc = new PhoneMccMnc();
     public static String language = "en";//系统语言
     public static String[] mobile = new String[2];
@@ -62,10 +54,6 @@ public class PhoneInfo {
         m_context = context;
         countryCode = getDeviceCountryCode(m_context);
         Log.d(TAG, "countryCode:" + countryCode);
-        imei = DeviceIdFactory.getInstance(m_context).getDeviceUuid();
-        Log.d(TAG, "imei:" + imei);
-        mac = this.getAddress();
-        Log.d(TAG, "mac:" + mac);
         packageName = m_context.getPackageName();
         Log.d(TAG, "packageName:" + packageName);
         language = getLanguage();
@@ -99,6 +87,8 @@ public class PhoneInfo {
         }
         phoneModel = Build.BRAND + " " + Build.MODEL;
         Log.d(TAG, "phoneModel:" + phoneModel);
+
+
 
         new Thread(new Runnable() {
             public void run() {
@@ -180,32 +170,6 @@ public class PhoneInfo {
 
         return "us";
 
-    }
-
-    /**获取mac地址**/
-    private String getAddress() {
-        try {
-            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
-            for (NetworkInterface nif : all) {
-                if (nif.getName().equalsIgnoreCase("wlan0")) {
-                    byte[] macBytes = nif.getHardwareAddress();
-                    if (macBytes == null) {
-                        return "";
-                    }
-                    StringBuilder res1 = new StringBuilder();
-                    for (byte b : macBytes) {
-                        res1.append(String.format("%02X:", b));
-                    }
-                    if (res1.length() > 0) {
-                        res1.deleteCharAt(res1.length() - 1);
-                    }
-                    return res1.toString();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
     }
 
     //获取版本名
@@ -306,86 +270,6 @@ public class PhoneInfo {
     }
 
 }
-
-
-class DeviceIdFactory {
-    protected static final String PREFS_FILE = "device_id.xml";
-    protected static final String PREFS_DEVICE_ID = "device_id";
-    protected static volatile UUID uuid;
-    private static volatile DeviceIdFactory mInstance;
-    public static String TAG = "Yole_PhoneInfo";
-    private DeviceIdFactory(Context context) {
-        if (uuid == null) {
-            synchronized (DeviceIdFactory.class) {
-                if (uuid == null) {
-                    final SharedPreferences prefs = context
-                            .getSharedPreferences(PREFS_FILE, 0);
-                    final String id = prefs.getString(PREFS_DEVICE_ID, null);
-                    if (id != null) {
-                        // Use the ids previously computed and stored in the
-                        // prefs file
-                        uuid = UUID.fromString(id);
-                    } else {
-                        final String androidId = Settings.Secure.getString(
-                                context.getContentResolver(), Settings.Secure.ANDROID_ID);
-
-                        try {
-                            if (!"9774d56d682e549c".equals(androidId)) {
-                                uuid = UUID.nameUUIDFromBytes(androidId
-                                        .getBytes("utf8"));
-                            } else {
-                                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                                    String serial = null;
-                                    try {
-                                        serial = Build.class.getField("SERIAL").get(null).toString();
-                                    } catch (IllegalAccessException e) {
-                                        e.printStackTrace();
-                                    } catch (NoSuchFieldException e) {
-                                        e.printStackTrace();
-                                    }
-                                    String m_szDevIDShort = "35" + (Build.BOARD.length() % 10) + (Build.BRAND.length() % 10) + (Build.CPU_ABI.length() % 10) + (Build.DEVICE.length() % 10) + (Build.MANUFACTURER.length() % 10) + (Build.MODEL.length() % 10) + (Build.PRODUCT.length() % 10);
-
-                                    uuid = new UUID(m_szDevIDShort.hashCode(), serial.hashCode());
-
-                                } else {
-                                    final String deviceId = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
-                                    uuid = deviceId != null ? UUID
-                                            .nameUUIDFromBytes(deviceId
-                                                    .getBytes("utf8")) : UUID
-                                            .randomUUID();
-                                }
-                            }
-                        } catch (UnsupportedEncodingException e) {
-                            throw new RuntimeException(e);
-                        }
-                        // Write the value out to the prefs file
-                        prefs.edit()
-                                .putString(PREFS_DEVICE_ID, uuid.toString())
-                                .commit();
-                    }
-                }
-            }
-        }
-    }
-
-    public static DeviceIdFactory getInstance(Context context) {
-        if (mInstance == null) {
-            synchronized (DeviceIdFactory.class) {
-                if (mInstance == null) {
-                    mInstance = new DeviceIdFactory(context);
-                }
-            }
-        }
-        return mInstance;
-    }
-
-
-    public String  getDeviceUuid() {
-        Log.d(TAG, "getDeviceUuid "+uuid.toString());
-        return uuid.toString();
-    }
-}
-
 
 class AdvertisingIdClient {
     public static final class AdInfo {

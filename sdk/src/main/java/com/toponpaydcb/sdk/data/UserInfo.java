@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.toponpaydcb.sdk.data.init.YoleInitConfig;
-import com.toponpaydcb.sdk.tool.FileSave;
 import com.toponpaydcb.sdk.tool.PhoneInfo;
 import com.toponpaydcb.sdk.YoleSdkMgr;
 import com.toponpaydcb.sdk.callback.CallBackFunction;
@@ -25,8 +24,6 @@ public class UserInfo extends UserInfoBase{
         act = var1;
         config = _config;
         info = new PhoneInfo(act);
-        String[] data = FileSave.readContent("PhoneNumber.text",var1);
-        phoneNumber = data.length > 0 ? data[0] : "";
         Log.d(TAG, "NetUtil init:appkey="+config.getAppKey()+"cpCode="+config.getCpCode());
     }
     public YoleInitConfig getConfig(){return super.config;}
@@ -37,14 +34,6 @@ public class UserInfo extends UserInfoBase{
     public  String getMcc(){return super.getMcc();}
     public  String getMnc(){return super.getMnc();}
     public  String getCountryCode(){return super.getCountryCode();}
-    public  String getImei()
-    {
-        return super.getImei();
-    }
-    public  String getMac()
-    {
-        return super.getMac();
-    }
     public  String getPackageName()
     {
         return super.getPackageName();

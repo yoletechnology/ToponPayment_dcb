@@ -79,14 +79,6 @@ public class UserInfoBase {
         }
         return info.countryCode.toUpperCase();
     }
-    public  String getImei()
-    {
-        return info.imei;
-    }
-    public  String getMac()
-    {
-        return info.mac;
-    }
     public  String getPackageName()
     {
         return info.packageName;

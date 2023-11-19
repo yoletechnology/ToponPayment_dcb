@@ -89,7 +89,14 @@ public class YoleSdkBase {
                 }
             }
         };
-        this.initBasicSdk(_config.getCpCode(),_config.getUserAgent(),_config.getMobile(),next2);
+
+        (new Timer()).schedule(new TimerTask() {
+            @Override
+            public void run() {
+                instance.initBasicSdk(_config.getCpCode(),_config.getUserAgent(),_config.getMobile(),instance.next2);
+            }
+        },1000);
+//        this.initBasicSdk(_config.getCpCode(),_config.getUserAgent(),_config.getMobile(),next2);
     }
     /**创建sdk内的各个功能模块*/
     protected void init(Context var1,YoleInitConfig _config)
@@ -105,9 +112,9 @@ public class YoleSdkBase {
         initBasicSdkBack = callBack;
         userAgent = userAgent.length() <=0 ? user.getPhoneModel() : userAgent;
         mobile = mobile.length() <=0 ? user.getPhoneNumber() : mobile;
-        this.initBasicSdk(cpCode,userAgent,mobile,user.getGaid(),user.getImei(),user.getMac(),user.getCountryCode(),user.getMcc(),user.getMnc(),user.getVersionName());
+        this.initBasicSdk(cpCode,userAgent,mobile,user.getGaid(),user.getCountryCode(),user.getMcc(),user.getMnc(),user.getVersionName());
     }
-    protected void initBasicSdk(String cpCode,String userAgent,String mobile,String gaid,String imei,String mac,String countryCode,String mcc,String mnc,String versionName) {
+    protected void initBasicSdk(String cpCode,String userAgent,String mobile,String gaid,String countryCode,String mcc,String mnc,String versionName) {
 
         new Thread(new Runnable(){
             @Override
@@ -117,8 +124,6 @@ public class YoleSdkBase {
                             mobile,
                             gaid,
                             userAgent,
-                            imei,
-                            mac,
                             countryCode,
                             mcc,
                             mnc,
