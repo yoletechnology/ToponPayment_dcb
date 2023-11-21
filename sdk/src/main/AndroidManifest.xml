@@ -4,7 +4,8 @@
     <application>
         <activity
             android:name=".dcb.PaymentView"
-            android:exported="true">
+            android:exported="false">
         </activity>
+        <meta-data android:name="android.webkit.WebView.EnableSafeBrowsing" android:value="true" />
     </application>
 </manifest>
